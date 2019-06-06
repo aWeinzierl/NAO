@@ -199,15 +199,23 @@ public:
         action_execute.joint_angles.joint_angles.push_back(-0.56);
         //send goal message to the robot using actionlib client
         cout << "adada" << endl;
-        jointAnglesClient.sendGoal(action_execute);
 
-        //wait until the robot finish execution of current goal. The timeout is 2 seconds
-        ros::Rate r_sleep(20);
-        while ((!jointAnglesClient.waitForResult(ros::Duration(2.0))) && (ros::ok())) {
-            r_sleep.sleep();
-        }
+        ExecuteAction(action_execute);
     }
 
+        void ExecuteActionAsync(naoqi_bridge_msgs::JointAnglesWithSpeedGoal action){
+            jointAnglesClient.sendGoal(action);
+        }
+
+        void ExecuteAction(
+                naoqi_bridge_msgs::JointAnglesWithSpeedGoal action,
+                ros::Duration timeOut = ros::Duration(10)){
+            ExecuteActionAsync(action);
+            ros::Rate r_sleep(20);
+            while (!jointAnglesClient.waitForResult( timeOut) && ros::ok()) {
+                r_sleep.sleep();
+            }
+        }
 };
 
 int main(int argc, char **argv) {
