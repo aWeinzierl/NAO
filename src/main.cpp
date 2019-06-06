@@ -44,7 +44,7 @@ struct Interval {
 struct ApproximatelyEqual {
     template<typename KeyType>
     bool operator()(const KeyType &lhs, const KeyType &rhs) const {
-        return lhs - rhs < std::numeric_limits<KeyType>::epsilon();
+        return std::abs(lhs - rhs) < std::numeric_limits<KeyType>::epsilon();
     }
 };
 
