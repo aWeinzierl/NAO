@@ -10,13 +10,6 @@ void spinThread() {
     }
 }
 
-struct Interval {
-    Interval(double lowerLimit, double upperLimit) : lowerLimit(lowerLimit), upperLimit(upperLimit) {}
-
-
-    float lowerLimit;
-    float upperLimit;
-};
 
 
 NaoControl::NaoControl() : jointAnglesClient("/joint_angles_action", true) {
@@ -59,24 +52,24 @@ bool NaoControl::withinIntervalExclusive(const double value, const Interval &int
 bool NaoControl::check_joint_limits_left_arm(sensor_msgs::JointState joints) {
     std::vector<double> &positions = joints.position;
 
-    return withinIntervalExclusive(positions.at(2), Interval(-2.0857, 2.0857))
-           && withinIntervalExclusive(positions.at(3), Interval(-0.3142, 1.3265))
-           && withinIntervalExclusive(positions.at(4), Interval(-2.0857, 2.0857))
-           && withinIntervalExclusive(positions.at(5), Interval(-1.5446, -0.0349))
-           && withinIntervalExclusive(positions.at(6), Interval(-1.8238, 1.8238))
-           && allowedStatesForHands.end() != allowedStatesForHands.find(positions.at(7));
+    return withinIntervalExclusive(positions.at(2), LEFT_SHOULDER_PITCH_LIMITS)
+           && withinIntervalExclusive(positions.at(3), LEFT_SHOULDER_ROLL_LIMITS)
+           && withinIntervalExclusive(positions.at(4), LEFT_ELBOW_YAW_LIMITS)
+           && withinIntervalExclusive(positions.at(5), LEFT_ELBOW_ROLL_LIMITS)
+           && withinIntervalExclusive(positions.at(6), LEFT_WRIST_YAW_LIMITS)
+           && LEFT_HAND_STATES.end() != LEFT_HAND_STATES.find(positions.at(7));
 }
 
 // this function checks joint limits of the right arm. You need to provide JointState vector
 bool NaoControl::check_joint_limits_right_arm(sensor_msgs::JointState joints) {
     std::vector<double> &positions = joints.position;
 
-    return withinIntervalExclusive(positions.at(20), Interval(-2.0857, 2.0857))
-           && withinIntervalExclusive(positions.at(21), Interval(-1.3265, 0.3142))
-           && withinIntervalExclusive(positions.at(22), Interval(-2.0857, 2.0857))
-           && withinIntervalExclusive(positions.at(23), Interval(0.0349, 1.5446))
-           && withinIntervalExclusive(positions.at(24), Interval(-1.8238, 1.8238))
-           && allowedStatesForHands.end() != allowedStatesForHands.find(positions.at(25));
+    return withinIntervalExclusive(positions.at(20), RIGHT_SHOULDER_PITCH_LIMITS)
+           && withinIntervalExclusive(positions.at(21), RIGHT_SHOULDER_ROLL_LIMITS)
+           && withinIntervalExclusive(positions.at(22), RIGHT_ELBOW_YAW_LIMITS)
+           && withinIntervalExclusive(positions.at(23), RIGHT_ELBOW_ROLL_LIMITS)
+           && withinIntervalExclusive(positions.at(24), RIGHT_WRIST_YAW_LIMITS)
+           && RIGHT_HAND_STATES.end() != RIGHT_HAND_STATES.find(positions.at(25));
 }
 
 // this callback recives info about current joint states

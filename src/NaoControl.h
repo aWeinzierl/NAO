@@ -9,7 +9,12 @@
 
 typedef actionlib::SimpleActionClient<naoqi_bridge_msgs::JointAnglesWithSpeedAction> JointAnglesClient;
 
-class Interval;
+struct Interval {
+    constexpr Interval(double lowerLimit, double upperLimit) : lowerLimit(lowerLimit), upperLimit(upperLimit) {}
+
+    float lowerLimit;
+    float upperLimit;
+};
 
 struct ApproximatelyEqual {
     template<typename KeyType>
@@ -54,11 +59,6 @@ public:
 
     bool withinIntervalExclusive(double value, const Interval &interval);
 
-    const std::unordered_set<
-            double,
-            std::unordered_set<double>::hasher,
-            ApproximatelyEqual,
-            std::unordered_set<double>::allocator_type> allowedStatesForHands = {0, 1};
 
     // this function checks joint limits of the left arm. You need to provide JointState vector
     bool check_joint_limits_left_arm(sensor_msgs::JointState joints);
@@ -78,4 +78,28 @@ public:
     void ExecuteAction(
             naoqi_bridge_msgs::JointAnglesWithSpeedGoal action,
             ros::Duration timeOut = ros::Duration(10));
+
+private:
+    static constexpr Interval LEFT_SHOULDER_PITCH_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
+    static constexpr Interval LEFT_SHOULDER_ROLL_LIMITS = Interval(-0.3142, 1.3265); // NOLINT(cert-err58-cpp)
+    static constexpr Interval LEFT_ELBOW_YAW_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
+    static constexpr Interval LEFT_ELBOW_ROLL_LIMITS = Interval(-1.5446, -0.0349); // NOLINT(cert-err58-cpp)
+    static constexpr Interval LEFT_WRIST_YAW_LIMITS = Interval(-1.8238, 1.8238); // NOLINT(cert-err58-cpp)
+    const std::unordered_set<
+            double,
+            std::unordered_set<double>::hasher,
+            ApproximatelyEqual,
+            std::unordered_set<double>::allocator_type> LEFT_HAND_STATES = {0, 1};
+
+
+    static constexpr Interval RIGHT_SHOULDER_PITCH_LIMITS = LEFT_SHOULDER_PITCH_LIMITS;
+    static constexpr Interval RIGHT_SHOULDER_ROLL_LIMITS = Interval(-1.3265, 0.3142); // NOLINT(cert-err58-cpp)
+    static constexpr Interval RIGHT_ELBOW_YAW_LIMITS = LEFT_ELBOW_YAW_LIMITS;
+    static constexpr Interval RIGHT_ELBOW_ROLL_LIMITS = Interval(0.0349, 1.5446); // NOLINT(cert-err58-cpp)
+    static constexpr Interval RIGHT_WRIST_YAW_LIMITS = LEFT_WRIST_YAW_LIMITS;
+    const std::unordered_set<
+            double,
+            std::unordered_set<double>::hasher,
+            ApproximatelyEqual,
+            std::unordered_set<double>::allocator_type> RIGHT_HAND_STATES = LEFT_HAND_STATES;
 };
