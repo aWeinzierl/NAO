@@ -16,7 +16,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(nao_2 src/main.cpp)
+add_executable(nao_2 src/main.cpp src/NaoControl.cpp src/NaoControl.h)
 target_link_libraries(nao_2 ${catkin_LIBRARIES})
 
 find_package(Boost REQUIRED COMPONENTS system thread)
