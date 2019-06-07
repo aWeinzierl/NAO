@@ -123,31 +123,28 @@ void NaoControl::publish_joint_states() {
     /*
      * TODO tutorial
      */
+    std::cout << "adada" << std::endl;
+    Pitch_right_shoulder(-0.56, 0.05)
+}
 
-    //example of moving LShoulderPitch joint to -0.56 angle
-    //Prepare the goal message
+void NaoControl::block_until_action_finished() {
+    ros::Rate r_sleep(20);
+    while (!jointAnglesClient.waitForResult(m_timeOut) && ros::ok()) {
+        r_sleep.sleep();
+    }
+}
+
+void NaoControl::Pitch_right_shoulder(float goalPosition, float velocity) {
+    Pitch_right_shoulder_async(goalPosition, velocity);
+    block_until_action_finished();
+}
+
+void NaoControl::Pitch_right_shoulder_async(float goalPosition, float velocity) {
     naoqi_bridge_msgs::JointAnglesWithSpeedGoal action_execute;
     action_execute.joint_angles.speed = 0.05;
     //this variable controls if the angles are relative (1) or not relative (0).
     action_execute.joint_angles.relative = 0;
     action_execute.joint_angles.joint_names.push_back("LShoulderPitch");
     action_execute.joint_angles.joint_angles.push_back(-0.56);
-    //send goal message to the robot using actionlib client
-    std::cout << "adada" << std::endl;
-
-    ExecuteAction(action_execute);
-}
-
-void NaoControl::ExecuteActionAsync(naoqi_bridge_msgs::JointAnglesWithSpeedGoal action) {
-    jointAnglesClient.sendGoal(action);
-}
-
-void NaoControl::ExecuteAction(
-        naoqi_bridge_msgs::JointAnglesWithSpeedGoal action,
-        ros::Duration timeOut) {
-    ExecuteActionAsync(action);
-    ros::Rate r_sleep(20);
-    while (!jointAnglesClient.waitForResult(timeOut) && ros::ok()) {
-        r_sleep.sleep();
-    }
+    jointAnglesClient.sendGoal(action_execute);
 }

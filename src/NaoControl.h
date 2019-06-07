@@ -56,6 +56,8 @@ public:
             ApproximatelyEqual,
             std::unordered_set<double>::allocator_type> RIGHT_HAND_STATES = LEFT_HAND_STATES;
 
+    void Pitch_right_shoulder(float goalPosition, float velocity);
+    void Pitch_right_shoulder_async(float goalPosition, float velocity);
 
 private:
 
@@ -100,10 +102,7 @@ private:
     // this callback recives info about current joint states
     void sensorCallback(const sensor_msgs::JointState::ConstPtr &jointState);
 
-    void ExecuteActionAsync(naoqi_bridge_msgs::JointAnglesWithSpeedGoal action);
+    void block_until_action_finished();
 
-    void ExecuteAction(
-            naoqi_bridge_msgs::JointAnglesWithSpeedGoal action,
-            ros::Duration timeOut = ros::Duration(10));
-
+    const ros::Duration m_timeOut;
 };
