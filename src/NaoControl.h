@@ -149,7 +149,7 @@ namespace NAO {
         // this callback provides information about current head tactile buttons.
         void tactileCallback(const naoqi_bridge_msgs::HandTouch::ConstPtr &tactileState);
 
-        bool withinIntervalExclusive(double value, const Interval &interval);
+        static constexpr bool within_interval_exclusive(double value, const Interval &interval);
 
 
         // this function checks joint limits of the left arm. You need to provide JointState vector
