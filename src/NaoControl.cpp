@@ -7,7 +7,7 @@
 
 namespace NAO {
 
-    void NaoControl::spinThread() {
+    void NaoControl::spin_thread() {
         ros::Rate r(30);
         while (!m_stop_thread) {
             ros::spinOnce();
@@ -23,16 +23,16 @@ namespace NAO {
 
         m_stop_thread = false;
 
-        // subscribe to topic joint_states and specify that all data will be processed by function sensorCallback
-        m_sensor_data_sub = m_nodeHandle.subscribe("/joint_states", 1, &NaoControl::sensorCallback, this);
+        // subscribe to topic joint_states and specify that all data will be processed by function sensor_callback
+        m_sensor_data_sub = m_nodeHandle.subscribe("/joint_states", 1, &NaoControl::sensor_callback, this);
 
-        // subscribe to topic bumper and specify that all data will be processed by function bumperCallback
-        m_bumper_sub = m_nodeHandle.subscribe("/bumper", 1, &NaoControl::bumperCallback, this);
+        // subscribe to topic bumper and specify that all data will be processed by function bumper_callback
+        m_bumper_sub = m_nodeHandle.subscribe("/bumper", 1, &NaoControl::bumper_callback, this);
 
-        // subscribe to topic tactile_touch and specify that all data will be processed by function tactileCallback
-        m_tactile_sub = m_nodeHandle.subscribe("/tactile_touch", 1, &NaoControl::tactileCallback, this);
+        // subscribe to topic tactile_touch and specify that all data will be processed by function tactile_callback
+        m_tactile_sub = m_nodeHandle.subscribe("/tactile_touch", 1, &NaoControl::tactile_callback, this);
 
-        m_spin_thread = std::make_unique<boost::thread>(boost::bind(&NaoControl::spinThread, this));
+        m_spin_thread = std::make_unique<boost::thread>(boost::bind(&NaoControl::spin_thread, this));
     }
 
     NaoControl::~NaoControl() {
@@ -42,12 +42,12 @@ namespace NAO {
     }
 
 // this callback function provides information about nao feet bumpers
-    void NaoControl::bumperCallback(const naoqi_bridge_msgs::Bumper::ConstPtr &bumperState) {
+    void NaoControl::bumper_callback(const naoqi_bridge_msgs::Bumper::ConstPtr &bumperState) {
 
     }
 
 // this callback provides information about current head tactile buttons.
-    void NaoControl::tactileCallback(const naoqi_bridge_msgs::HandTouch::ConstPtr &tactileState) {
+    void NaoControl::tactile_callback(const naoqi_bridge_msgs::HandTouch::ConstPtr &tactileState) {
 
 
     }
@@ -81,7 +81,7 @@ namespace NAO {
     }
 
 // this callback recives info about current joint states
-    void NaoControl::sensorCallback(const sensor_msgs::JointState::ConstPtr &jointState) {
+    void NaoControl::sensor_callback(const sensor_msgs::JointState::ConstPtr &jointState) {
         m_current_left_arm_state.name.clear();
         m_current_left_arm_state.position.clear();
         m_current_right_arm_state.name.clear();

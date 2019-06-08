@@ -144,10 +144,10 @@ namespace NAO {
         bool m_stop_thread;
 
         // this callback function provides information about nao feet bumpers
-        void bumperCallback(const naoqi_bridge_msgs::Bumper::ConstPtr &bumperState);
+        void bumper_callback(const naoqi_bridge_msgs::Bumper::ConstPtr &bumperState);
 
         // this callback provides information about current head tactile buttons.
-        void tactileCallback(const naoqi_bridge_msgs::HandTouch::ConstPtr &tactileState);
+        void tactile_callback(const naoqi_bridge_msgs::HandTouch::ConstPtr &tactileState);
 
         static constexpr bool within_interval_exclusive(double value, const Interval &interval);
 
@@ -158,7 +158,7 @@ namespace NAO {
         bool check_joint_limits_right_arm(sensor_msgs::JointState joints);
 
         // this callback recives info about current joint states
-        void sensorCallback(const sensor_msgs::JointState::ConstPtr &jointState);
+        void sensor_callback(const sensor_msgs::JointState::ConstPtr &jointState);
 
         void block_until_action_finished();
 
@@ -166,6 +166,6 @@ namespace NAO {
                                                                         const std::string &jointName);
         double degree_to_radians(double angle) const noexcept;
 
-        void spinThread();
+        void spin_thread();
     };
 }
