@@ -4,9 +4,8 @@
 
 #include <boost/math/constants/constants.hpp>
 
-bool stop_thread = false;
 
-void spinThread() {
+void NaoControl::spinThread() {
     ros::Rate r(30);
     while (!stop_thread) {
         ros::spinOnce();
@@ -30,7 +29,7 @@ NaoControl::NaoControl() : jointAnglesClient("/joint_angles_action", true) {
     tactile_sub = nh_.subscribe("/tactile_touch", 1, &NaoControl::tactileCallback, this);
 
     stop_thread = false;
-    spin_thread = new boost::thread(&spinThread);
+    spin_thread = new boost::thread(boost::bind(&NaoControl::spinThread, this));
 }
 
 NaoControl::~NaoControl() {

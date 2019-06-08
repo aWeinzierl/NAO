@@ -142,4 +142,8 @@ private:
                                                                     const std::string &jointName);
 
     double degree_to_radians(const double angle) const noexcept;
+
+    bool stop_thread;
+
+    void spinThread();
 };
