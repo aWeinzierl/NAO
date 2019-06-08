@@ -40,8 +40,8 @@ namespace NAO {
         // this is main loop which should send commands to the nao arms.
         void publish_joint_states();
 
-        static constexpr Interval HEAD_PITCH_LIMITS = Interval(-2.0857, 2.0857);
-        static constexpr Interval HEAD_YAW_LIMITS = Interval(-0.6720, 0.5149);
+        static constexpr Interval HEAD_PITCH_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
+        static constexpr Interval HEAD_YAW_LIMITS = Interval(-0.6720, 0.5149); // NOLINT(cert-err58-cpp)
 
         static constexpr Interval LEFT_SHOULDER_PITCH_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
         static constexpr Interval LEFT_SHOULDER_ROLL_LIMITS = Interval(-0.3142, 1.3265); // NOLINT(cert-err58-cpp)
