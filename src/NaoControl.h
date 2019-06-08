@@ -26,6 +26,11 @@ struct ApproximatelyEqual {
 class NaoControl {
 public:
 
+    enum class HAND_POSITION {
+        OPEN = 0,
+        CLOSED = 1
+    };
+
     NaoControl();
 
     ~NaoControl();
@@ -42,7 +47,7 @@ public:
             double,
             std::unordered_set<double>::hasher,
             ApproximatelyEqual,
-            std::unordered_set<double>::allocator_type> LEFT_HAND_STATES = {0, 1};
+            std::unordered_set<double>::allocator_type> LEFT_HAND_STATES = {HAND_POSITION::OPEN, HAND_POSITION::CLOSED};
 
 
     static constexpr Interval RIGHT_SHOULDER_PITCH_LIMITS = LEFT_SHOULDER_PITCH_LIMITS;
