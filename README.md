@@ -7,5 +7,5 @@ roslaunch nao_apps tactile.launch
 
 ## Run the program
 ```
-rosrun nao_HCR_tutorial_6 nao_2
+rosrun nao nao
 ```

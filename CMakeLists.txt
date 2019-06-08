@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(nao_HCR_tutorial_6)
+project(nao)
 
 add_definitions(-std=c++14)
 
@@ -17,9 +17,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(nao_2 src/main.cpp src/NaoControl.cpp src/NaoControl.h)
-target_link_libraries(nao_2 ${catkin_LIBRARIES})
+add_executable(nao src/main.cpp src/NaoControl.cpp src/NaoControl.h)
+target_link_libraries(nao ${catkin_LIBRARIES})
 
 find_package(Boost REQUIRED COMPONENTS system thread)
 include_directories(${Boost_INCLUDE_DIRS})
-target_link_libraries(nao_2 ${Boost_LIBRARIES})
+target_link_libraries(nao ${Boost_LIBRARIES})
