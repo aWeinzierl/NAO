@@ -7,143 +7,168 @@
 #include <naoqi_bridge_msgs/HandTouch.h>
 #include <unordered_set>
 
-typedef actionlib::SimpleActionClient<naoqi_bridge_msgs::JointAnglesWithSpeedAction> JointAnglesClient;
+namespace NAO {
 
-struct Interval {
-    constexpr Interval(double lowerLimit, double upperLimit) : lowerLimit(lowerLimit), upperLimit(upperLimit) {}
+    typedef actionlib::SimpleActionClient<naoqi_bridge_msgs::JointAnglesWithSpeedAction> JointAnglesClient;
 
-    float lowerLimit;
-    float upperLimit;
-};
+    struct Interval {
+        constexpr Interval(double lowerLimit, double upperLimit) : lowerLimit(lowerLimit), upperLimit(upperLimit) {}
 
-struct ApproximatelyEqual {
-    template<typename KeyType>
-    bool operator()(const KeyType &lhs, const KeyType &rhs) const {
-        return std::abs(lhs - rhs) < std::numeric_limits<KeyType>::epsilon();
-    }
-};
-
-class NaoControl {
-public:
-
-    enum class HAND_POSITION {
-        OPEN = 0,
-        CLOSED = 1
+        float lowerLimit;
+        float upperLimit;
     };
 
-    NaoControl();
-
-    ~NaoControl();
-
-    // this is main loop which should send commands to the nao arms.
-    void publish_joint_states();
-
-    static constexpr Interval LEFT_SHOULDER_PITCH_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
-    static constexpr Interval LEFT_SHOULDER_ROLL_LIMITS = Interval(-0.3142, 1.3265); // NOLINT(cert-err58-cpp)
-    static constexpr Interval LEFT_ELBOW_YAW_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
-    static constexpr Interval LEFT_ELBOW_ROLL_LIMITS = Interval(-1.5446, -0.0349); // NOLINT(cert-err58-cpp)
-    static constexpr Interval LEFT_WRIST_YAW_LIMITS = Interval(-1.8238, 1.8238); // NOLINT(cert-err58-cpp)
-    const std::unordered_set<
-            double,
-            std::unordered_set<double>::hasher,
-            ApproximatelyEqual,
-            std::unordered_set<double>::allocator_type> LEFT_HAND_STATES = {
-            static_cast<double>(HAND_POSITION::OPEN),
-            static_cast<double>(HAND_POSITION::CLOSED)
+    struct ApproximatelyEqual {
+        template<typename KeyType>
+        bool operator()(const KeyType &lhs, const KeyType &rhs) const {
+            return std::abs(lhs - rhs) < std::numeric_limits<KeyType>::epsilon();
+        }
     };
 
+    class NaoControl {
+    public:
 
-    static constexpr Interval RIGHT_SHOULDER_PITCH_LIMITS = LEFT_SHOULDER_PITCH_LIMITS;
-    static constexpr Interval RIGHT_SHOULDER_ROLL_LIMITS = Interval(-1.3265, 0.3142); // NOLINT(cert-err58-cpp)
-    static constexpr Interval RIGHT_ELBOW_YAW_LIMITS = LEFT_ELBOW_YAW_LIMITS;
-    static constexpr Interval RIGHT_ELBOW_ROLL_LIMITS = Interval(0.0349, 1.5446); // NOLINT(cert-err58-cpp)
-    static constexpr Interval RIGHT_WRIST_YAW_LIMITS = LEFT_WRIST_YAW_LIMITS;
-    const std::unordered_set<
-            double,
-            std::unordered_set<double>::hasher,
-            ApproximatelyEqual,
-            std::unordered_set<double>::allocator_type> RIGHT_HAND_STATES = LEFT_HAND_STATES;
+        enum class HAND_POSITION {
+            OPEN = 0,
+            CLOSED = 1
+        };
 
-    void Pitch_left_shoulder(float goalPosition, float velocity);
-    void Pitch_left_shoulder_async(float goalPosition, float velocity);
-    void Roll_left_shoulder(float goalPosition, float velocity);
-    void Roll_left_shoulder_async(float goalPosition, float velocity);
-    void Yaw_left_elbow(float goalPosition, float velocity);
-    void Yaw_left_elbow_async(float goalPosition, float velocity);
-    void Roll_left_elbow(float goalPosition, float velocity);
-    void Roll_left_elbow_async(float goalPosition, float velocity);
-    void Yaw_left_wrist(float goalPosition, float velocity);
-    void Yaw_left_wrist_async(float goalPosition, float velocity);
-    void Adjust_left_hand_position(HAND_POSITION goalPosition, float velocity);
-    void Adjust_left_hand_positionAsync(HAND_POSITION goalPosition, float velocity);
+        NaoControl();
 
-    void Pitch_right_shoulder(float goalPosition, float velocity);
-    void Pitch_right_shoulder_async(float goalPosition, float velocity);
-    void Roll_right_shoulder(float goalPosition, float velocity);
-    void Roll_right_shoulder_async(float goalPosition, float velocity);
-    void Yaw_right_elbow(float goalPosition, float velocity);
-    void Yaw_right_elbow_async(float goalPosition, float velocity);
-    void Roll_right_elbow(float goalPosition, float velocity);
-    void Roll_right_elbow_async(float goalPosition, float velocity);
-    void Yaw_right_wrist(float goalPosition, float velocity);
-    void Yaw_right_wrist_async(float goalPosition, float velocity);
-    void Adjust_right_hand_position(HAND_POSITION goalPosition, float velocity);
-    void Adjust_right_hand_positionAsync(HAND_POSITION goalPosition, float velocity);
+        ~NaoControl();
+
+        // this is main loop which should send commands to the nao arms.
+        void publish_joint_states();
+
+        static constexpr Interval LEFT_SHOULDER_PITCH_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
+        static constexpr Interval LEFT_SHOULDER_ROLL_LIMITS = Interval(-0.3142, 1.3265); // NOLINT(cert-err58-cpp)
+        static constexpr Interval LEFT_ELBOW_YAW_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
+        static constexpr Interval LEFT_ELBOW_ROLL_LIMITS = Interval(-1.5446, -0.0349); // NOLINT(cert-err58-cpp)
+        static constexpr Interval LEFT_WRIST_YAW_LIMITS = Interval(-1.8238, 1.8238); // NOLINT(cert-err58-cpp)
+        const std::unordered_set<
+                double,
+                std::unordered_set<double>::hasher,
+                ApproximatelyEqual,
+                std::unordered_set<double>::allocator_type> LEFT_HAND_STATES = {
+                static_cast<double>(HAND_POSITION::OPEN),
+                static_cast<double>(HAND_POSITION::CLOSED)
+        };
 
 
-private:
+        static constexpr Interval RIGHT_SHOULDER_PITCH_LIMITS = LEFT_SHOULDER_PITCH_LIMITS;
+        static constexpr Interval RIGHT_SHOULDER_ROLL_LIMITS = Interval(-1.3265, 0.3142); // NOLINT(cert-err58-cpp)
+        static constexpr Interval RIGHT_ELBOW_YAW_LIMITS = LEFT_ELBOW_YAW_LIMITS;
+        static constexpr Interval RIGHT_ELBOW_ROLL_LIMITS = Interval(0.0349, 1.5446); // NOLINT(cert-err58-cpp)
+        static constexpr Interval RIGHT_WRIST_YAW_LIMITS = LEFT_WRIST_YAW_LIMITS;
+        const std::unordered_set<
+                double,
+                std::unordered_set<double>::hasher,
+                ApproximatelyEqual,
+                std::unordered_set<double>::allocator_type> RIGHT_HAND_STATES = LEFT_HAND_STATES;
 
-    // ros handler
-    ros::NodeHandle nh_;
+        void Pitch_left_shoulder(float goalPosition, float velocity);
 
-    // subscriber to joint states
-    ros::Subscriber sensor_data_sub;
+        void Pitch_left_shoulder_async(float goalPosition, float velocity);
 
-    // subscriber to bumpers states
-    ros::Subscriber bumper_sub;
+        void Roll_left_shoulder(float goalPosition, float velocity);
 
-    // subscriber to head tactile states
-    ros::Subscriber tactile_sub;
+        void Roll_left_shoulder_async(float goalPosition, float velocity);
 
-    // variables which store current states of the joints
-    sensor_msgs::JointState current_left_arm_state;
-    sensor_msgs::JointState current_right_arm_state;
-    sensor_msgs::JointState current_head_legs_state;
+        void Yaw_left_elbow(float goalPosition, float velocity);
 
-    //define actionlib client for joint angles control
-    JointAnglesClient jointAnglesClient;
+        void Yaw_left_elbow_async(float goalPosition, float velocity);
 
-    boost::thread *spin_thread;
+        void Roll_left_elbow(float goalPosition, float velocity);
+
+        void Roll_left_elbow_async(float goalPosition, float velocity);
+
+        void Yaw_left_wrist(float goalPosition, float velocity);
+
+        void Yaw_left_wrist_async(float goalPosition, float velocity);
+
+        void Adjust_left_hand_position(HAND_POSITION goalPosition, float velocity);
+
+        void Adjust_left_hand_positionAsync(HAND_POSITION goalPosition, float velocity);
+
+        void Pitch_right_shoulder(float goalPosition, float velocity);
+
+        void Pitch_right_shoulder_async(float goalPosition, float velocity);
+
+        void Roll_right_shoulder(float goalPosition, float velocity);
+
+        void Roll_right_shoulder_async(float goalPosition, float velocity);
+
+        void Yaw_right_elbow(float goalPosition, float velocity);
+
+        void Yaw_right_elbow_async(float goalPosition, float velocity);
+
+        void Roll_right_elbow(float goalPosition, float velocity);
+
+        void Roll_right_elbow_async(float goalPosition, float velocity);
+
+        void Yaw_right_wrist(float goalPosition, float velocity);
+
+        void Yaw_right_wrist_async(float goalPosition, float velocity);
+
+        void Adjust_right_hand_position(HAND_POSITION goalPosition, float velocity);
+
+        void Adjust_right_hand_positionAsync(HAND_POSITION goalPosition, float velocity);
 
 
-    // this callback function provides information about nao feet bumpers
-    void bumperCallback(const naoqi_bridge_msgs::Bumper::ConstPtr &bumperState);
+    private:
 
-    // this callback provides information about current head tactile buttons.
-    void tactileCallback(const naoqi_bridge_msgs::HandTouch::ConstPtr &tactileState);
+        // ros handler
+        ros::NodeHandle nh_;
 
-    bool withinIntervalExclusive(double value, const Interval &interval);
+        // subscriber to joint states
+        ros::Subscriber sensor_data_sub;
+
+        // subscriber to bumpers states
+        ros::Subscriber bumper_sub;
+
+        // subscriber to head tactile states
+        ros::Subscriber tactile_sub;
+
+        // variables which store current states of the joints
+        sensor_msgs::JointState current_left_arm_state;
+        sensor_msgs::JointState current_right_arm_state;
+        sensor_msgs::JointState current_head_legs_state;
+
+        //define actionlib client for joint angles control
+        JointAnglesClient jointAnglesClient;
+
+        boost::thread *spin_thread;
 
 
-    // this function checks joint limits of the left arm. You need to provide JointState vector
-    bool check_joint_limits_left_arm(sensor_msgs::JointState joints);
+        // this callback function provides information about nao feet bumpers
+        void bumperCallback(const naoqi_bridge_msgs::Bumper::ConstPtr &bumperState);
 
-    // this function checks joint limits of the right arm. You need to provide JointState vector
-    bool check_joint_limits_right_arm(sensor_msgs::JointState joints);
+        // this callback provides information about current head tactile buttons.
+        void tactileCallback(const naoqi_bridge_msgs::HandTouch::ConstPtr &tactileState);
 
-    // this callback recives info about current joint states
-    void sensorCallback(const sensor_msgs::JointState::ConstPtr &jointState);
+        bool withinIntervalExclusive(double value, const Interval &interval);
 
-    void block_until_action_finished();
 
-    const ros::Duration m_timeOut;
+        // this function checks joint limits of the left arm. You need to provide JointState vector
+        bool check_joint_limits_left_arm(sensor_msgs::JointState joints);
 
-    naoqi_bridge_msgs::JointAnglesWithSpeedGoal createAndSendAction(float jointGoalAngle, float velocity,
-                                                                    const std::string &jointName);
+        // this function checks joint limits of the right arm. You need to provide JointState vector
+        bool check_joint_limits_right_arm(sensor_msgs::JointState joints);
 
-    double degree_to_radians(const double angle) const noexcept;
+        // this callback recives info about current joint states
+        void sensorCallback(const sensor_msgs::JointState::ConstPtr &jointState);
 
-    bool stop_thread;
+        void block_until_action_finished();
 
-    void spinThread();
-};
+        const ros::Duration m_timeOut;
+
+        naoqi_bridge_msgs::JointAnglesWithSpeedGoal createAndSendAction(float jointGoalAngle, float velocity,
+                                                                        const std::string &jointName);
+
+        double degree_to_radians(const double angle) const noexcept;
+
+        bool stop_thread;
+
+        void spinThread();
+    };
+}

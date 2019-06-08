@@ -3,7 +3,7 @@
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "nao_tutorial6");
-    NaoControl ic;
+    NAO::NaoControl ic;
     sleep(2);
     ic.publish_joint_states();
 
