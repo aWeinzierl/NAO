@@ -15,6 +15,7 @@ find_package(catkin REQUIRED cmake_modules COMPONENTS
 catkin_package()
 include_directories(
   ${catkin_INCLUDE_DIRS}
+        src/ext/RxCpp/Rx/v2/src
 )
 
 add_executable(nao src/main.cpp src/NaoControl.cpp src/NaoControl.h)
