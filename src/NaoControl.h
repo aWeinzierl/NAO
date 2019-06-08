@@ -151,7 +151,6 @@ namespace NAO {
 
         static constexpr bool within_interval_exclusive(double value, const Interval &interval);
 
-
         // this function checks joint limits of the left arm. You need to provide JointState vector
         bool check_joint_limits_left_arm(sensor_msgs::JointState joints);
 
@@ -165,9 +164,7 @@ namespace NAO {
 
         naoqi_bridge_msgs::JointAnglesWithSpeedGoal createAndSendAction(float jointGoalAngle, float velocity,
                                                                         const std::string &jointName);
-
-        double degree_to_radians(const double angle) const noexcept;
-
+        double degree_to_radians(double angle) const noexcept;
 
         void spinThread();
     };

@@ -56,7 +56,6 @@ namespace NAO {
         return interval.lowerLimit < value && interval.upperLimit > value;
     }
 
-
 // this function checks joint limits of the left arm. You need to provide JointState vector
     bool NaoControl::check_joint_limits_left_arm(sensor_msgs::JointState joints) {
         std::vector<double> &positions = joints.position;
@@ -125,7 +124,6 @@ namespace NAO {
         m_current_head_legs_state.name.push_back(jointState->name.at(25));
         m_current_head_legs_state.position.push_back(jointState->position.at(25));
     }
-
 
 // this is main loop which should send commands to the nao arms.
     void NaoControl::publish_joint_states() {
