@@ -2,6 +2,8 @@
 
 #include <exception>
 
+#include <boost/math/constants/constants.hpp>
+
 bool stop_thread = false;
 
 void spinThread() {
@@ -12,7 +14,10 @@ void spinThread() {
     }
 }
 
-
+double NaoControl::degree_to_radians(const double angle) const noexcept
+{
+    return angle/180*boost::math::constants::pi<double>();
+}
 
 NaoControl::NaoControl() : jointAnglesClient("/joint_angles_action", true) {
     // subscribe to topic joint_states and specify that all data will be processed by function sensorCallback
@@ -137,8 +142,9 @@ void NaoControl::block_until_action_finished() {
 }
 
 void NaoControl::Pitch_left_shoulder_async(float goalPosition, float velocity) {
-    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_PITCH_LIMITS)) throw std::out_of_range("goalPosition");
-    createAndSendAction(goalPosition, velocity, "LShoulderPitch");
+    auto goalPositionRadians = degree_to_radians(goalPosition);
+    if (!withinIntervalExclusive(goalPositionRadians, RIGHT_SHOULDER_PITCH_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPositionRadians, velocity, "LShoulderPitch");
 }
 
 void NaoControl::Pitch_left_shoulder(float goalPosition, float velocity) {
@@ -147,8 +153,9 @@ void NaoControl::Pitch_left_shoulder(float goalPosition, float velocity) {
 }
 
 void NaoControl::Roll_left_shoulder_async(float goalPosition, float velocity) {
-    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
-    createAndSendAction(goalPosition, velocity, "LShoulderRoll");
+    auto goalPositionRadians = degree_to_radians(goalPosition);
+    if (!withinIntervalExclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPositionRadians, velocity, "LShoulderRoll");
 }
 
 void NaoControl::Roll_left_shoulder(float goalPosition, float velocity) {
@@ -157,8 +164,9 @@ void NaoControl::Roll_left_shoulder(float goalPosition, float velocity) {
 }
 
 void NaoControl::Yaw_left_elbow_async(float goalPosition, float velocity) {
-    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
-    createAndSendAction(goalPosition, velocity, "LElbowYaw");
+    auto goalPositionRadians = degree_to_radians(goalPosition);
+    if (!withinIntervalExclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPositionRadians, velocity, "LElbowYaw");
 }
 
 void NaoControl::Yaw_left_elbow(float goalPosition, float velocity) {
@@ -167,8 +175,9 @@ void NaoControl::Yaw_left_elbow(float goalPosition, float velocity) {
 }
 
 void NaoControl::Roll_left_elbow_async(float goalPosition, float velocity) {
-    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
-    createAndSendAction(goalPosition, velocity, "LElbowRoll");
+    auto goalPositionRadians = degree_to_radians(goalPosition);
+    if (!withinIntervalExclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPositionRadians, velocity, "LElbowRoll");
 }
 
 void NaoControl::Roll_left_elbow(float goalPosition, float velocity) {
@@ -177,8 +186,9 @@ void NaoControl::Roll_left_elbow(float goalPosition, float velocity) {
 }
 
 void NaoControl::Yaw_left_wrist_async(float goalPosition, float velocity) {
-    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
-    createAndSendAction(goalPosition, velocity, "LWristYaw");
+    auto goalPositionRadians = degree_to_radians(goalPosition);
+    if (!withinIntervalExclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPositionRadians, velocity, "LWristYaw");
 }
 
 void NaoControl::Yaw_left_wrist(float goalPosition, float velocity) {
@@ -187,7 +197,6 @@ void NaoControl::Yaw_left_wrist(float goalPosition, float velocity) {
 }
 
 void NaoControl::Adjust_left_hand_positionAsync(NaoControl::HAND_POSITION goalPosition, float velocity) {
-    if (RIGHT_HAND_STATES.end()==RIGHT_HAND_STATES.find(static_cast<double>(goalPosition))) throw std::out_of_range("goalPosition");
     createAndSendAction(static_cast<double>(goalPosition), velocity, "LHand");
 }
 
@@ -197,8 +206,9 @@ void NaoControl::Adjust_left_hand_position(NaoControl::HAND_POSITION goalPositio
 }
 
 void NaoControl::Pitch_right_shoulder_async(float goalPosition, float velocity) {
-    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_PITCH_LIMITS)) throw std::out_of_range("goalPosition");
-    createAndSendAction(goalPosition, velocity, "RShoulderPitch");
+    auto goalPositionRadians = degree_to_radians(goalPosition);
+    if (!withinIntervalExclusive(goalPositionRadians, RIGHT_SHOULDER_PITCH_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPositionRadians, velocity, "RShoulderPitch");
 }
 
 void NaoControl::Pitch_right_shoulder(float goalPosition, float velocity) {
@@ -207,8 +217,9 @@ void NaoControl::Pitch_right_shoulder(float goalPosition, float velocity) {
 }
 
 void NaoControl::Roll_right_shoulder_async(float goalPosition, float velocity) {
-    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
-    createAndSendAction(goalPosition, velocity, "RShoulderRoll");
+    auto goalPositionRadians = degree_to_radians(goalPosition);
+    if (!withinIntervalExclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPositionRadians, velocity, "RShoulderRoll");
 }
 
 void NaoControl::Roll_right_shoulder(float goalPosition, float velocity) {
@@ -217,8 +228,9 @@ void NaoControl::Roll_right_shoulder(float goalPosition, float velocity) {
 }
 
 void NaoControl::Yaw_right_elbow_async(float goalPosition, float velocity) {
-    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
-    createAndSendAction(goalPosition, velocity, "RElbowYaw");
+    auto goalPositionRadians = degree_to_radians(goalPosition);
+    if (!withinIntervalExclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPositionRadians, velocity, "RElbowYaw");
 }
 
 void NaoControl::Yaw_right_elbow(float goalPosition, float velocity) {
@@ -227,8 +239,9 @@ void NaoControl::Yaw_right_elbow(float goalPosition, float velocity) {
 }
 
 void NaoControl::Roll_right_elbow_async(float goalPosition, float velocity) {
-    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
-    createAndSendAction(goalPosition, velocity, "RElbowRoll");
+    auto goalPositionRadians = degree_to_radians(goalPosition);
+    if (!withinIntervalExclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPositionRadians, velocity, "RElbowRoll");
 }
 
 void NaoControl::Roll_right_elbow(float goalPosition, float velocity) {
@@ -237,8 +250,9 @@ void NaoControl::Roll_right_elbow(float goalPosition, float velocity) {
 }
 
 void NaoControl::Yaw_right_wrist_async(float goalPosition, float velocity) {
-    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
-    createAndSendAction(goalPosition, velocity, "RWristYaw");
+    auto goalPositionRadians = degree_to_radians(goalPosition);
+    if (!withinIntervalExclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPositionRadians, velocity, "RWristYaw");
 }
 
 void NaoControl::Yaw_right_wrist(float goalPosition, float velocity) {

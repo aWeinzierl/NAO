@@ -140,4 +140,6 @@ private:
 
     naoqi_bridge_msgs::JointAnglesWithSpeedGoal createAndSendAction(float jointGoalAngle, float velocity,
                                                                     const std::string &jointName);
+
+    double degree_to_radians(const double angle) const noexcept;
 };
