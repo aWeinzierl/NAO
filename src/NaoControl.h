@@ -40,6 +40,9 @@ namespace NAO {
         // this is main loop which should send commands to the nao arms.
         void publish_joint_states();
 
+        static constexpr Interval HEAD_PITCH_LIMITS = Interval(-2.0857, 2.0857);
+        static constexpr Interval HEAD_YAW_LIMITS = Interval(-0.6720, 0.5149);
+
         static constexpr Interval LEFT_SHOULDER_PITCH_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
         static constexpr Interval LEFT_SHOULDER_ROLL_LIMITS = Interval(-0.3142, 1.3265); // NOLINT(cert-err58-cpp)
         static constexpr Interval LEFT_ELBOW_YAW_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
@@ -65,6 +68,14 @@ namespace NAO {
                 std::unordered_set<double>::hasher,
                 ApproximatelyEqual,
                 std::unordered_set<double>::allocator_type> RIGHT_HAND_STATES = LEFT_HAND_STATES;
+
+        void Pitch_head(float goalPosition, float velocity);
+
+        void Pitch_head_async(float goalPosition, float velocity);
+
+        void Yaw_head(float goalPosition, float velocity);
+
+        void Yaw_head_async(float goalPosition, float velocity);
 
         void Pitch_left_shoulder(float goalPosition, float velocity);
 

@@ -289,4 +289,29 @@ namespace NAO {
         m_jointAnglesClient.sendGoal(action);
     }
 
+    void NaoControl::Pitch_head(float goalPosition, float velocity) {
+        Pitch_head_async(goalPosition,velocity);
+        block_until_action_finished();
+
+    }
+
+    void NaoControl::Pitch_head_async(float goalPosition, float velocity) {
+        auto goalPositionRadians = degree_to_radians(goalPosition);
+        if (!within_interval_exclusive(goalPositionRadians, HEAD_PITCH_LIMITS))
+            throw std::out_of_range("goalPosition");
+        createAndSendAction(goalPositionRadians, velocity, "HeadPitch" );
+    }
+
+    void NaoControl::Yaw_head(float goalPosition, float velocity) {
+        Yaw_head_async(goalPosition,velocity);
+        block_until_action_finished();
+
+    }
+
+    void NaoControl::Yaw_head_async(float goalPosition, float velocity) {
+        auto goalPositionRadians = degree_to_radians(goalPosition);
+        if (!within_interval_exclusive(goalPositionRadians, HEAD_YAW_LIMITS))
+            throw std::out_of_range("goalPosition");
+        createAndSendAction(goalPositionRadians, velocity, "HeadYaw" );
+    }
 }
