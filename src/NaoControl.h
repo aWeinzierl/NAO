@@ -173,8 +173,8 @@ namespace NAO {
 
         void block_until_action_finished();
 
-        naoqi_bridge_msgs::JointAnglesWithSpeedGoal createAndSendAction(float jointGoalAngle, float velocity,
-                                                                        const std::string &jointName);
+        naoqi_bridge_msgs::JointAnglesWithSpeedGoal create_and_sendAction(float jointGoalAngle, float velocity,
+                                                                          const std::string &jointName);
         double degree_to_radians(double angle) const noexcept;
 
         void spin_thread();

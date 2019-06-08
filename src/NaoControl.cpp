@@ -145,7 +145,7 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_PITCH_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "LShoulderPitch");
+        create_and_sendAction(goalPositionRadians, velocity, "LShoulderPitch");
     }
 
     void NaoControl::Pitch_left_shoulder(float goalPosition, float velocity) {
@@ -157,7 +157,7 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "LShoulderRoll");
+        create_and_sendAction(goalPositionRadians, velocity, "LShoulderRoll");
     }
 
     void NaoControl::Roll_left_shoulder(float goalPosition, float velocity) {
@@ -169,7 +169,7 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "LElbowYaw");
+        create_and_sendAction(goalPositionRadians, velocity, "LElbowYaw");
     }
 
     void NaoControl::Yaw_left_elbow(float goalPosition, float velocity) {
@@ -181,7 +181,7 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "LElbowRoll");
+        create_and_sendAction(goalPositionRadians, velocity, "LElbowRoll");
     }
 
     void NaoControl::Roll_left_elbow(float goalPosition, float velocity) {
@@ -193,7 +193,7 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "LWristYaw");
+        create_and_sendAction(goalPositionRadians, velocity, "LWristYaw");
     }
 
     void NaoControl::Yaw_left_wrist(float goalPosition, float velocity) {
@@ -202,7 +202,7 @@ namespace NAO {
     }
 
     void NaoControl::Adjust_left_hand_positionAsync(NaoControl::HAND_POSITION goalPosition, float velocity) {
-        createAndSendAction(static_cast<double>(goalPosition), velocity, "LHand");
+        create_and_sendAction(static_cast<double>(goalPosition), velocity, "LHand");
     }
 
     void NaoControl::Adjust_left_hand_position(NaoControl::HAND_POSITION goalPosition, float velocity) {
@@ -214,7 +214,7 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_PITCH_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "RShoulderPitch");
+        create_and_sendAction(goalPositionRadians, velocity, "RShoulderPitch");
     }
 
     void NaoControl::Pitch_right_shoulder(float goalPosition, float velocity) {
@@ -226,7 +226,7 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "RShoulderRoll");
+        create_and_sendAction(goalPositionRadians, velocity, "RShoulderRoll");
     }
 
     void NaoControl::Roll_right_shoulder(float goalPosition, float velocity) {
@@ -238,7 +238,7 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "RElbowYaw");
+        create_and_sendAction(goalPositionRadians, velocity, "RElbowYaw");
     }
 
     void NaoControl::Yaw_right_elbow(float goalPosition, float velocity) {
@@ -250,7 +250,7 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "RElbowRoll");
+        create_and_sendAction(goalPositionRadians, velocity, "RElbowRoll");
     }
 
     void NaoControl::Roll_right_elbow(float goalPosition, float velocity) {
@@ -262,7 +262,7 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "RWristYaw");
+        create_and_sendAction(goalPositionRadians, velocity, "RWristYaw");
     }
 
     void NaoControl::Yaw_right_wrist(float goalPosition, float velocity) {
@@ -271,7 +271,7 @@ namespace NAO {
     }
 
     void NaoControl::Adjust_right_hand_positionAsync(NaoControl::HAND_POSITION goalPosition, float velocity) {
-        createAndSendAction(static_cast<double>(goalPosition), velocity, "RHand");
+        create_and_sendAction(static_cast<double>(goalPosition), velocity, "RHand");
     }
 
     void NaoControl::Adjust_right_hand_position(NaoControl::HAND_POSITION goalPosition, float velocity) {
@@ -279,8 +279,8 @@ namespace NAO {
         block_until_action_finished();
     }
 
-    naoqi_bridge_msgs::JointAnglesWithSpeedGoal NaoControl::createAndSendAction(float jointGoalAngle, float velocity,
-                                                                                const std::string &jointName) {
+    naoqi_bridge_msgs::JointAnglesWithSpeedGoal NaoControl::create_and_sendAction(float jointGoalAngle, float velocity,
+                                                                                  const std::string &jointName) {
         naoqi_bridge_msgs::JointAnglesWithSpeedGoal action;
         action.joint_angles.relative = 0;
         action.joint_angles.speed = velocity;
@@ -299,7 +299,7 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, HEAD_PITCH_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "HeadPitch" );
+        create_and_sendAction(goalPositionRadians, velocity, "HeadPitch");
     }
 
     void NaoControl::Yaw_head(float goalPosition, float velocity) {
@@ -312,6 +312,6 @@ namespace NAO {
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!within_interval_exclusive(goalPositionRadians, HEAD_YAW_LIMITS))
             throw std::out_of_range("goalPosition");
-        createAndSendAction(goalPositionRadians, velocity, "HeadYaw" );
+        create_and_sendAction(goalPositionRadians, velocity, "HeadYaw");
     }
 }
