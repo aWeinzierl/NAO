@@ -47,7 +47,10 @@ public:
             double,
             std::unordered_set<double>::hasher,
             ApproximatelyEqual,
-            std::unordered_set<double>::allocator_type> LEFT_HAND_STATES = {HAND_POSITION::OPEN, HAND_POSITION::CLOSED};
+            std::unordered_set<double>::allocator_type> LEFT_HAND_STATES = {
+            static_cast<double>(HAND_POSITION::OPEN),
+            static_cast<double>(HAND_POSITION::CLOSED)
+    };
 
 
     static constexpr Interval RIGHT_SHOULDER_PITCH_LIMITS = LEFT_SHOULDER_PITCH_LIMITS;
@@ -61,8 +64,32 @@ public:
             ApproximatelyEqual,
             std::unordered_set<double>::allocator_type> RIGHT_HAND_STATES = LEFT_HAND_STATES;
 
+    void Pitch_left_shoulder(float goalPosition, float velocity);
+    void Pitch_left_shoulder_async(float goalPosition, float velocity);
+    void Roll_left_shoulder(float goalPosition, float velocity);
+    void Roll_left_shoulder_async(float goalPosition, float velocity);
+    void Yaw_left_elbow(float goalPosition, float velocity);
+    void Yaw_left_elbow_async(float goalPosition, float velocity);
+    void Roll_left_elbow(float goalPosition, float velocity);
+    void Roll_left_elbow_async(float goalPosition, float velocity);
+    void Yaw_left_wrist(float goalPosition, float velocity);
+    void Yaw_left_wrist_async(float goalPosition, float velocity);
+    void Adjust_left_hand_position(HAND_POSITION goalPosition, float velocity);
+    void Adjust_left_hand_positionAsync(HAND_POSITION goalPosition, float velocity);
+
     void Pitch_right_shoulder(float goalPosition, float velocity);
     void Pitch_right_shoulder_async(float goalPosition, float velocity);
+    void Roll_right_shoulder(float goalPosition, float velocity);
+    void Roll_right_shoulder_async(float goalPosition, float velocity);
+    void Yaw_right_elbow(float goalPosition, float velocity);
+    void Yaw_right_elbow_async(float goalPosition, float velocity);
+    void Roll_right_elbow(float goalPosition, float velocity);
+    void Roll_right_elbow_async(float goalPosition, float velocity);
+    void Yaw_right_wrist(float goalPosition, float velocity);
+    void Yaw_right_wrist_async(float goalPosition, float velocity);
+    void Adjust_right_hand_position(HAND_POSITION goalPosition, float velocity);
+    void Adjust_right_hand_positionAsync(HAND_POSITION goalPosition, float velocity);
+
 
 private:
 
@@ -110,4 +137,7 @@ private:
     void block_until_action_finished();
 
     const ros::Duration m_timeOut;
+
+    naoqi_bridge_msgs::JointAnglesWithSpeedGoal createAndSendAction(float jointGoalAngle, float velocity,
+                                                                    const std::string &jointName);
 };

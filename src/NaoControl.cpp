@@ -136,18 +136,131 @@ void NaoControl::block_until_action_finished() {
     }
 }
 
-void NaoControl::Pitch_right_shoulder(float goalPosition, float velocity) {
-    Pitch_right_shoulder_async(goalPosition, velocity);
+void NaoControl::Pitch_left_shoulder_async(float goalPosition, float velocity) {
+    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_PITCH_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPosition, velocity, "LShoulderPitch");
+}
+
+void NaoControl::Pitch_left_shoulder(float goalPosition, float velocity) {
+    Pitch_left_shoulder_async(goalPosition, velocity);
+    block_until_action_finished();
+}
+
+void NaoControl::Roll_left_shoulder_async(float goalPosition, float velocity) {
+    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPosition, velocity, "LShoulderRoll");
+}
+
+void NaoControl::Roll_left_shoulder(float goalPosition, float velocity) {
+    Roll_left_shoulder_async(goalPosition,velocity);
+    block_until_action_finished();
+}
+
+void NaoControl::Yaw_left_elbow_async(float goalPosition, float velocity) {
+    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPosition, velocity, "LElbowYaw");
+}
+
+void NaoControl::Yaw_left_elbow(float goalPosition, float velocity) {
+    Yaw_left_elbow_async(goalPosition,velocity);
+    block_until_action_finished();
+}
+
+void NaoControl::Roll_left_elbow_async(float goalPosition, float velocity) {
+    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPosition, velocity, "LElbowRoll");
+}
+
+void NaoControl::Roll_left_elbow(float goalPosition, float velocity) {
+    Roll_left_elbow_async(goalPosition,velocity);
+    block_until_action_finished();
+}
+
+void NaoControl::Yaw_left_wrist_async(float goalPosition, float velocity) {
+    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPosition, velocity, "LWristYaw");
+}
+
+void NaoControl::Yaw_left_wrist(float goalPosition, float velocity) {
+    Yaw_left_wrist_async(goalPosition,velocity);
+    block_until_action_finished();
+}
+
+void NaoControl::Adjust_left_hand_positionAsync(NaoControl::HAND_POSITION goalPosition, float velocity) {
+    if (RIGHT_HAND_STATES.end()==RIGHT_HAND_STATES.find(static_cast<double>(goalPosition))) throw std::out_of_range("goalPosition");
+    createAndSendAction(static_cast<double>(goalPosition), velocity, "LHand");
+}
+
+void NaoControl::Adjust_left_hand_position(NaoControl::HAND_POSITION goalPosition, float velocity) {
+    Adjust_left_hand_positionAsync(goalPosition, velocity);
     block_until_action_finished();
 }
 
 void NaoControl::Pitch_right_shoulder_async(float goalPosition, float velocity) {
     if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_PITCH_LIMITS)) throw std::out_of_range("goalPosition");
-    naoqi_bridge_msgs::JointAnglesWithSpeedGoal action_execute;
-    action_execute.joint_angles.speed = 0.05;
-    //this variable controls if the angles are relative (1) or not relative (0).
-    action_execute.joint_angles.relative = 0;
-    action_execute.joint_angles.joint_names.push_back("LShoulderPitch");
-    action_execute.joint_angles.joint_angles.push_back(-0.56);
-    jointAnglesClient.sendGoal(action_execute);
+    createAndSendAction(goalPosition, velocity, "LShoulderPitch");
+}
+
+void NaoControl::Pitch_right_shoulder(float goalPosition, float velocity) {
+    Pitch_right_shoulder_async(goalPosition, velocity);
+    block_until_action_finished();
+}
+
+void NaoControl::Roll_right_shoulder_async(float goalPosition, float velocity) {
+    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPosition, velocity, "RShoulderRoll");
+}
+
+void NaoControl::Roll_right_shoulder(float goalPosition, float velocity) {
+    Roll_right_shoulder_async(goalPosition,velocity);
+    block_until_action_finished();
+}
+
+void NaoControl::Yaw_right_elbow_async(float goalPosition, float velocity) {
+    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPosition, velocity, "RElbowYaw");
+}
+
+void NaoControl::Yaw_right_elbow(float goalPosition, float velocity) {
+    Yaw_right_elbow_async(goalPosition,velocity);
+    block_until_action_finished();
+}
+
+void NaoControl::Roll_right_elbow_async(float goalPosition, float velocity) {
+    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPosition, velocity, "RElbowRoll");
+}
+
+void NaoControl::Roll_right_elbow(float goalPosition, float velocity) {
+    Roll_right_elbow_async(goalPosition,velocity);
+    block_until_action_finished();
+}
+
+void NaoControl::Yaw_right_wrist_async(float goalPosition, float velocity) {
+    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_ROLL_LIMITS)) throw std::out_of_range("goalPosition");
+    createAndSendAction(goalPosition, velocity, "RWristYaw");
+}
+
+void NaoControl::Yaw_right_wrist(float goalPosition, float velocity) {
+    Yaw_right_wrist_async(goalPosition,velocity);
+    block_until_action_finished();
+}
+
+void NaoControl::Adjust_right_hand_positionAsync(NaoControl::HAND_POSITION goalPosition, float velocity) {
+    createAndSendAction(static_cast<double>(goalPosition), velocity, "RHand");
+}
+
+void NaoControl::Adjust_right_hand_position(NaoControl::HAND_POSITION goalPosition, float velocity) {
+    Adjust_right_hand_positionAsync(goalPosition, velocity);
+    block_until_action_finished();
+}
+
+naoqi_bridge_msgs::JointAnglesWithSpeedGoal NaoControl::createAndSendAction(float jointGoalAngle, float velocity,
+                                                                            const std::string &jointName) {
+    naoqi_bridge_msgs::JointAnglesWithSpeedGoal action;
+    action.joint_angles.relative = 0;
+    action.joint_angles.speed = velocity;
+    action.joint_angles.joint_names.push_back(jointName);
+    action.joint_angles.joint_angles.push_back(jointGoalAngle);
+    jointAnglesClient.sendGoal(action);
 }
