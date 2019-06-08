@@ -137,7 +137,7 @@ namespace NAO {
         //define actionlib client for joint angles control
         JointAnglesClient m_jointAnglesClient;
 
-        boost::thread *m_spin_thread;
+        std::unique_ptr<boost::thread> m_spin_thread;
 
         const ros::Duration m_timeOut;
 

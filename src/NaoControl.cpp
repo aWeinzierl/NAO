@@ -1,6 +1,7 @@
 #include "NaoControl.h"
 
 #include <exception>
+#include <memory>
 
 #include <boost/math/constants/constants.hpp>
 
@@ -31,7 +32,7 @@ namespace NAO {
         // subscribe to topic tactile_touch and specify that all data will be processed by function tactileCallback
         m_tactile_sub = m_nodeHandle.subscribe("/tactile_touch", 1, &NaoControl::tactileCallback, this);
 
-        m_spin_thread = new boost::thread(boost::bind(&NaoControl::spinThread, this));
+        m_spin_thread = std::make_unique<boost::thread>(boost::bind(&NaoControl::spinThread, this));
     }
 
     NaoControl::~NaoControl() {
