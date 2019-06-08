@@ -198,7 +198,7 @@ void NaoControl::Adjust_left_hand_position(NaoControl::HAND_POSITION goalPositio
 
 void NaoControl::Pitch_right_shoulder_async(float goalPosition, float velocity) {
     if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_PITCH_LIMITS)) throw std::out_of_range("goalPosition");
-    createAndSendAction(goalPosition, velocity, "LShoulderPitch");
+    createAndSendAction(goalPosition, velocity, "RShoulderPitch");
 }
 
 void NaoControl::Pitch_right_shoulder(float goalPosition, float velocity) {
