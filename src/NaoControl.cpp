@@ -1,5 +1,7 @@
 #include "NaoControl.h"
 
+#include <exception>
+
 bool stop_thread = false;
 
 void spinThread() {
@@ -124,7 +126,7 @@ void NaoControl::publish_joint_states() {
      * TODO tutorial
      */
     std::cout << "adada" << std::endl;
-    Pitch_right_shoulder(-0.56, 0.05)
+    Pitch_right_shoulder(-0.56, 0.05);
 }
 
 void NaoControl::block_until_action_finished() {
@@ -140,6 +142,7 @@ void NaoControl::Pitch_right_shoulder(float goalPosition, float velocity) {
 }
 
 void NaoControl::Pitch_right_shoulder_async(float goalPosition, float velocity) {
+    if (!withinIntervalExclusive(goalPosition, RIGHT_SHOULDER_PITCH_LIMITS)) throw std::out_of_range("goalPosition");
     naoqi_bridge_msgs::JointAnglesWithSpeedGoal action_execute;
     action_execute.joint_angles.speed = 0.05;
     //this variable controls if the angles are relative (1) or not relative (0).
