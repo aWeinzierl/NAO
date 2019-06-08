@@ -8,7 +8,7 @@ namespace NAO {
 
     void NaoControl::spinThread() {
         ros::Rate r(30);
-        while (!stop_thread) {
+        while (!m_stop_thread) {
             ros::spinOnce();
             r.sleep();
         }
@@ -18,24 +18,26 @@ namespace NAO {
         return angle / 180 * boost::math::constants::pi<double>();
     }
 
-    NaoControl::NaoControl() : jointAnglesClient("/joint_angles_action", true) {
+    NaoControl::NaoControl() : m_jointAnglesClient("/joint_angles_action", true), m_timeOut(10) {
+
+        m_stop_thread = false;
+
         // subscribe to topic joint_states and specify that all data will be processed by function sensorCallback
-        sensor_data_sub = nh_.subscribe("/joint_states", 1, &NaoControl::sensorCallback, this);
+        m_sensor_data_sub = m_nodeHandle.subscribe("/joint_states", 1, &NaoControl::sensorCallback, this);
 
         // subscribe to topic bumper and specify that all data will be processed by function bumperCallback
-        bumper_sub = nh_.subscribe("/bumper", 1, &NaoControl::bumperCallback, this);
+        m_bumper_sub = m_nodeHandle.subscribe("/bumper", 1, &NaoControl::bumperCallback, this);
 
         // subscribe to topic tactile_touch and specify that all data will be processed by function tactileCallback
-        tactile_sub = nh_.subscribe("/tactile_touch", 1, &NaoControl::tactileCallback, this);
+        m_tactile_sub = m_nodeHandle.subscribe("/tactile_touch", 1, &NaoControl::tactileCallback, this);
 
-        stop_thread = false;
-        spin_thread = new boost::thread(boost::bind(&NaoControl::spinThread, this));
+        m_spin_thread = new boost::thread(boost::bind(&NaoControl::spinThread, this));
     }
 
     NaoControl::~NaoControl() {
-        stop_thread = true;
+        m_stop_thread = true;
         sleep(1);
-        spin_thread->join();
+        m_spin_thread->join();
     }
 
 // this callback function provides information about nao feet bumpers
@@ -80,47 +82,47 @@ namespace NAO {
 
 // this callback recives info about current joint states
     void NaoControl::sensorCallback(const sensor_msgs::JointState::ConstPtr &jointState) {
-        current_left_arm_state.name.clear();
-        current_left_arm_state.position.clear();
-        current_right_arm_state.name.clear();
-        current_right_arm_state.position.clear();
-        current_head_legs_state.name.clear();
-        current_head_legs_state.position.clear();
+        m_current_left_arm_state.name.clear();
+        m_current_left_arm_state.position.clear();
+        m_current_right_arm_state.name.clear();
+        m_current_right_arm_state.position.clear();
+        m_current_head_legs_state.name.clear();
+        m_current_head_legs_state.position.clear();
 
-        current_left_arm_state.header.stamp = ros::Time::now();
+        m_current_left_arm_state.header.stamp = ros::Time::now();
 
-        current_left_arm_state.name.push_back(jointState->name.at(2));
-        current_left_arm_state.position.push_back(jointState->position.at(2));
-        current_left_arm_state.name.push_back(jointState->name.at(3));
-        current_left_arm_state.position.push_back(jointState->position.at(3));
-        current_left_arm_state.name.push_back(jointState->name.at(4));
-        current_left_arm_state.position.push_back(jointState->position.at(4));
-        current_left_arm_state.name.push_back(jointState->name.at(5));
-        current_left_arm_state.position.push_back(jointState->position.at(5));
-        current_left_arm_state.name.push_back(jointState->name.at(6));
-        current_left_arm_state.position.push_back(jointState->position.at(6));
+        m_current_left_arm_state.name.push_back(jointState->name.at(2));
+        m_current_left_arm_state.position.push_back(jointState->position.at(2));
+        m_current_left_arm_state.name.push_back(jointState->name.at(3));
+        m_current_left_arm_state.position.push_back(jointState->position.at(3));
+        m_current_left_arm_state.name.push_back(jointState->name.at(4));
+        m_current_left_arm_state.position.push_back(jointState->position.at(4));
+        m_current_left_arm_state.name.push_back(jointState->name.at(5));
+        m_current_left_arm_state.position.push_back(jointState->position.at(5));
+        m_current_left_arm_state.name.push_back(jointState->name.at(6));
+        m_current_left_arm_state.position.push_back(jointState->position.at(6));
 
-        current_right_arm_state.name.push_back(jointState->name.at(20));
-        current_right_arm_state.position.push_back(jointState->position.at(20));
-        current_right_arm_state.name.push_back(jointState->name.at(21));
-        current_right_arm_state.position.push_back(jointState->position.at(21));
-        current_right_arm_state.name.push_back(jointState->name.at(22));
-        current_right_arm_state.position.push_back(jointState->position.at(22));
-        current_right_arm_state.name.push_back(jointState->name.at(23));
-        current_right_arm_state.position.push_back(jointState->position.at(23));
-        current_right_arm_state.name.push_back(jointState->name.at(24));
-        current_right_arm_state.position.push_back(jointState->position.at(24));
+        m_current_right_arm_state.name.push_back(jointState->name.at(20));
+        m_current_right_arm_state.position.push_back(jointState->position.at(20));
+        m_current_right_arm_state.name.push_back(jointState->name.at(21));
+        m_current_right_arm_state.position.push_back(jointState->position.at(21));
+        m_current_right_arm_state.name.push_back(jointState->name.at(22));
+        m_current_right_arm_state.position.push_back(jointState->position.at(22));
+        m_current_right_arm_state.name.push_back(jointState->name.at(23));
+        m_current_right_arm_state.position.push_back(jointState->position.at(23));
+        m_current_right_arm_state.name.push_back(jointState->name.at(24));
+        m_current_right_arm_state.position.push_back(jointState->position.at(24));
 
-        current_head_legs_state.name.push_back(jointState->name.at(0));
-        current_head_legs_state.position.push_back(jointState->position.at(0));
-        current_head_legs_state.name.push_back(jointState->name.at(1));
-        current_head_legs_state.position.push_back(jointState->position.at(1));
+        m_current_head_legs_state.name.push_back(jointState->name.at(0));
+        m_current_head_legs_state.position.push_back(jointState->position.at(0));
+        m_current_head_legs_state.name.push_back(jointState->name.at(1));
+        m_current_head_legs_state.position.push_back(jointState->position.at(1));
         for (int i = 7; i < 20; i++) {
-            current_head_legs_state.name.push_back(jointState->name.at(i));
-            current_head_legs_state.position.push_back(jointState->position.at(i));
+            m_current_head_legs_state.name.push_back(jointState->name.at(i));
+            m_current_head_legs_state.position.push_back(jointState->position.at(i));
         }
-        current_head_legs_state.name.push_back(jointState->name.at(25));
-        current_head_legs_state.position.push_back(jointState->position.at(25));
+        m_current_head_legs_state.name.push_back(jointState->name.at(25));
+        m_current_head_legs_state.position.push_back(jointState->position.at(25));
     }
 
 
@@ -135,7 +137,7 @@ namespace NAO {
 
     void NaoControl::block_until_action_finished() {
         ros::Rate r_sleep(20);
-        while (!jointAnglesClient.waitForResult(m_timeOut) && ros::ok()) {
+        while (!m_jointAnglesClient.waitForResult(m_timeOut) && ros::ok()) {
             r_sleep.sleep();
         }
     }
@@ -285,7 +287,7 @@ namespace NAO {
         action.joint_angles.speed = velocity;
         action.joint_angles.joint_names.push_back(jointName);
         action.joint_angles.joint_angles.push_back(jointGoalAngle);
-        jointAnglesClient.sendGoal(action);
+        m_jointAnglesClient.sendGoal(action);
     }
 
 }

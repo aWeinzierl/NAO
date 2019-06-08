@@ -118,27 +118,30 @@ namespace NAO {
     private:
 
         // ros handler
-        ros::NodeHandle nh_;
+        ros::NodeHandle m_nodeHandle;
 
         // subscriber to joint states
-        ros::Subscriber sensor_data_sub;
+        ros::Subscriber m_sensor_data_sub;
 
         // subscriber to bumpers states
-        ros::Subscriber bumper_sub;
+        ros::Subscriber m_bumper_sub;
 
         // subscriber to head tactile states
-        ros::Subscriber tactile_sub;
+        ros::Subscriber m_tactile_sub;
 
         // variables which store current states of the joints
-        sensor_msgs::JointState current_left_arm_state;
-        sensor_msgs::JointState current_right_arm_state;
-        sensor_msgs::JointState current_head_legs_state;
+        sensor_msgs::JointState m_current_left_arm_state;
+        sensor_msgs::JointState m_current_right_arm_state;
+        sensor_msgs::JointState m_current_head_legs_state;
 
         //define actionlib client for joint angles control
-        JointAnglesClient jointAnglesClient;
+        JointAnglesClient m_jointAnglesClient;
 
-        boost::thread *spin_thread;
+        boost::thread *m_spin_thread;
 
+        const ros::Duration m_timeOut;
+
+        bool m_stop_thread;
 
         // this callback function provides information about nao feet bumpers
         void bumperCallback(const naoqi_bridge_msgs::Bumper::ConstPtr &bumperState);
@@ -160,14 +163,11 @@ namespace NAO {
 
         void block_until_action_finished();
 
-        const ros::Duration m_timeOut;
-
         naoqi_bridge_msgs::JointAnglesWithSpeedGoal createAndSendAction(float jointGoalAngle, float velocity,
                                                                         const std::string &jointName);
 
         double degree_to_radians(const double angle) const noexcept;
 
-        bool stop_thread;
 
         void spinThread();
     };
