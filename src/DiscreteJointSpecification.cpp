@@ -18,8 +18,12 @@ namespace NAO {
             double,
             std::unordered_set<double>::hasher,
             ApproximatelyEqual,
-            std::unordered_set<double>::allocator_type> valueSet)
-            :m_name(std::move(name)), m_value_set(std::move(valueSet)){
+            std::unordered_set<double>::allocator_type> valueSet, uint index)
+            :m_name(std::move(name)), m_value_set(std::move(valueSet)), m_index(index){
 
+    }
+
+    uint DiscreteJointSpecification::Get_index() const noexcept {
+        return m_index;
     }
 }

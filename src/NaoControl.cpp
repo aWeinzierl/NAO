@@ -57,27 +57,17 @@ namespace NAO {
     }
 
 // this function checks joint limits of the left arm. You need to provide JointState vector
-    bool NaoControl::check_joint_limits_left_arm(sensor_msgs::JointState joints) const {
+    bool NaoControl::check_joint_limits(sensor_msgs::JointState joints) const {
         std::vector<double> &positions = joints.position;
 
-        return continuousJoints.find(ContinuousJoint::LEFT_SHOULDER_PITCH)->second.Value_within_boundary(positions.at(2))
-               &&  continuousJoints.find(ContinuousJoint::LEFT_SHOULDER_ROLL)->second.Value_within_boundary(positions.at(3))
-               &&  continuousJoints.find(ContinuousJoint::LEFT_ELBOW_YAW)->second.Value_within_boundary(positions.at(4))
-               &&  continuousJoints.find(ContinuousJoint::LEFT_ELBOW_ROLL)->second.Value_within_boundary(positions.at(5))
-               &&  continuousJoints.find(ContinuousJoint::LEFT_WRIST_YAW)->second.Value_within_boundary(positions.at(6))
-               &&  discreteJoints.find(DiscreteJoint::LEFT_HAND)->second.Value_valid(positions.at(7));
-    }
+        for( const auto& keyValue : continuousJoints){
+            const auto& jointSpec = keyValue.second;
+            if (!jointSpec.Value_within_boundary(positions.at(jointSpec.Get_index()))){
+                return false;
+            }
+        }
 
-// this function checks joint limits of the right arm. You need to provide JointState vector
-    bool NaoControl::check_joint_limits_right_arm(sensor_msgs::JointState joints) const {
-        std::vector<double> &positions = joints.position;
-
-        return continuousJoints.find(ContinuousJoint::RIGHT_SHOULDER_PITCH)->second.Value_within_boundary(positions.at(20))
-               &&  continuousJoints.find(ContinuousJoint::RIGHT_SHOULDER_ROLL)->second.Value_within_boundary(positions.at(21))
-               &&  continuousJoints.find(ContinuousJoint::RIGHT_ELBOW_YAW)->second.Value_within_boundary(positions.at(22))
-               &&  continuousJoints.find(ContinuousJoint::RIGHT_ELBOW_ROLL)->second.Value_within_boundary(positions.at(23))
-               &&  continuousJoints.find(ContinuousJoint::RIGHT_WRIST_YAW)->second.Value_within_boundary(positions.at(24))
-               &&  discreteJoints.find(DiscreteJoint::RIGHT_HAND)->second.Value_valid(positions.at(25));
+        return true;
     }
 
 // this callback recives info about current joint states

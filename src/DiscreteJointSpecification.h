@@ -21,7 +21,7 @@ namespace NAO {
                 double,
                 std::unordered_set<double>::hasher,
                 ApproximatelyEqual,
-                std::unordered_set<double>::allocator_type>  valueSet);
+                std::unordered_set<double>::allocator_type>  valueSet, uint index);
 
 
         const std::string &Get_name() const;
@@ -35,6 +35,9 @@ namespace NAO {
         bool Value_valid(double value) const noexcept {
             return m_value_set.find(value) != m_value_set.end();
         }
+
+        uint Get_index() const noexcept;
+
     private:
         std::unordered_set<
                 double,
@@ -43,6 +46,8 @@ namespace NAO {
                 std::unordered_set<double>::allocator_type> m_value_set;
 
         std::string m_name;
+
+        uint m_index;
     };
 
 }

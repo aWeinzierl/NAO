@@ -42,42 +42,42 @@ namespace NAO {
 
         const std::unordered_map<ContinuousJoint, ContinuousJointSpecification, EnumClassHash> continuousJoints{
                 {ContinuousJoint::HEAD_PITCH,           ContinuousJointSpecification("HeadPitch",
-                                                                                     Interval(-2.0857, 2.0857))},
+                                                                                     Interval(-2.0857, 2.0857), 0)},
                 {ContinuousJoint::HEAD_YAW,             ContinuousJointSpecification("HeadYaw",
-                                                                                     Interval(-0.6720, 0.5149))},
+                                                                                     Interval(-0.6720, 0.5149), 1)},
 
                 {ContinuousJoint::LEFT_SHOULDER_PITCH,  ContinuousJointSpecification("LShoulderPitch",
-                                                                                     Interval(-2.0857, 2.0857))},
+                                                                                     Interval(-2.0857, 2.0857), 2)},
                 {ContinuousJoint::LEFT_SHOULDER_ROLL,   ContinuousJointSpecification("LShoulderRoll",
-                                                                                     Interval(-0.3142, 1.3265))},
+                                                                                     Interval(-0.3142, 1.3265), 3)},
                 {ContinuousJoint::LEFT_ELBOW_YAW,       ContinuousJointSpecification("LElbowYaw",
-                                                                                     Interval(-2.0857, 2.0857))},
+                                                                                     Interval(-2.0857, 2.0857), 4)},
                 {ContinuousJoint::LEFT_ELBOW_ROLL,      ContinuousJointSpecification("LElbowRoll",
-                                                                                     Interval(-1.5446, -0.0349))},
+                                                                                     Interval(-1.5446, -0.0349), 5)},
                 {ContinuousJoint::LEFT_WRIST_YAW,       ContinuousJointSpecification("LWristYaw",
-                                                                                     Interval(-1.8238, 1.8238))},
+                                                                                     Interval(-1.8238, 1.8238), 6)},
 
                 {ContinuousJoint::RIGHT_SHOULDER_PITCH, ContinuousJointSpecification("RShoulderPitch",
-                                                                                     Interval(-2.0857, 2.0857))},
+                                                                                     Interval(-2.0857, 2.0857), 20)},
                 {ContinuousJoint::RIGHT_SHOULDER_ROLL,  ContinuousJointSpecification("RShoulderRoll",
-                                                                                     Interval(-1.3265, 0.3142))},
+                                                                                     Interval(-1.3265, 0.3142), 21)},
                 {ContinuousJoint::RIGHT_ELBOW_YAW,      ContinuousJointSpecification("RElbowYaw",
-                                                                                     Interval(-2.0857, 2.0857))},
+                                                                                     Interval(-2.0857, 2.0857), 22)},
                 {ContinuousJoint::RIGHT_ELBOW_ROLL,     ContinuousJointSpecification("RElbowRoll",
-                                                                                     Interval(0.0349, 1.5446))},
+                                                                                     Interval(0.0349, 1.5446), 23)},
                 {ContinuousJoint::RIGHT_WRIST_YAW,      ContinuousJointSpecification("RWristYaw",
-                                                                                     Interval(-1.8238, 1.8238))},
+                                                                                     Interval(-1.8238, 1.8238), 24)},
         };
 
         const std::unordered_map<DiscreteJoint, DiscreteJointSpecification, EnumClassHash> discreteJoints{
                 {DiscreteJoint::LEFT_HAND, DiscreteJointSpecification("LHand", {
                         static_cast<double>(HAND_POSITION::OPEN),
                         static_cast<double>(HAND_POSITION::CLOSED)
-                })},
+                }, 7)},
                 {DiscreteJoint::RIGHT_HAND, DiscreteJointSpecification("RHand", {
                                                                          static_cast<double>(HAND_POSITION::OPEN),
                                                                          static_cast<double>(HAND_POSITION::CLOSED)
-                })},
+                }, 25)},
         };
 
         NaoControl* Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity);
@@ -120,13 +120,11 @@ namespace NAO {
 
         static constexpr bool within_interval_exclusive(double value, const Interval &interval);
 
-        // this function checks joint limits of the left arm. You need to provide JointState vector
-        bool check_joint_limits_left_arm(sensor_msgs::JointState joints) const;
+        // this function checks joint limits of the joints. You need to provide JointState vector
+        bool check_joint_limits(sensor_msgs::JointState joints) const;
 
-        // this function checks joint limits of the right arm. You need to provide JointState vector
-        bool check_joint_limits_right_arm(sensor_msgs::JointState joints)const ;
 
-        // this callback recives info about current joint states
+            // this callback recives info about current joint states
         void sensor_callback(const sensor_msgs::JointState::ConstPtr &jointState);
 
 
