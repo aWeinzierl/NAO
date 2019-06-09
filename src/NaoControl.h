@@ -8,6 +8,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <naoqi_bridge_msgs/Bumper.h>
 #include <naoqi_bridge_msgs/HandTouch.h>
+#include <rxcpp/rx.hpp>
 
 #include "Joints.h"
 #include "ContinuousJointSpecification.h"
@@ -70,19 +71,25 @@ namespace NAO {
         };
 
         const std::unordered_map<DiscreteJoint, DiscreteJointSpecification, EnumClassHash> discreteJoints{
-                {DiscreteJoint::LEFT_HAND, DiscreteJointSpecification("LHand", {
+                {DiscreteJoint::LEFT_HAND,  DiscreteJointSpecification("LHand", {
                         static_cast<double>(HAND_POSITION::OPEN),
                         static_cast<double>(HAND_POSITION::CLOSED)
                 }, 7)},
                 {DiscreteJoint::RIGHT_HAND, DiscreteJointSpecification("RHand", {
-                                                                         static_cast<double>(HAND_POSITION::OPEN),
-                                                                         static_cast<double>(HAND_POSITION::CLOSED)
+                        static_cast<double>(HAND_POSITION::OPEN),
+                        static_cast<double>(HAND_POSITION::CLOSED)
                 }, 25)},
         };
 
-        NaoControl* Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity);
-        NaoControl* Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity);
+        NaoControl *Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity);
+
+        NaoControl *Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity);
+
         void Block_until_motion_finished();
+
+        rxcpp::observable<naoqi_bridge_msgs::Bumper> Bumper_sensor_state;
+        rxcpp::observable<naoqi_bridge_msgs::HandTouch> Hand_touch_sensor_state;
+        rxcpp::observable<sensor_msgs::JointState> Joint_sensor_state;
 
     private:
 
@@ -124,7 +131,7 @@ namespace NAO {
         bool check_joint_limits(sensor_msgs::JointState joints) const;
 
 
-            // this callback recives info about current joint states
+        // this callback recives info about current joint states
         void sensor_callback(const sensor_msgs::JointState::ConstPtr &jointState);
 
 
@@ -134,5 +141,18 @@ namespace NAO {
         double degree_to_radians(double angle) const noexcept;
 
         void spin_thread();
+
+        template<typename T>
+        rxcpp::observable<T> from(ros::NodeHandle &nodeHandle, std::string topic) {
+            return rxcpp::sources::create<T>(
+                    [&nodeHandle, &topic](rxcpp::subscriber<T> out) {
+                        boost::function<void(const T &)> callback =
+                                [=](const T &msg) {
+                                    out.on_next(msg);
+                                    std::cout << "works";
+                                };
+                        auto token = nodeHandle.subscribe<T>(topic, 1, callback);
+                    });
+        }
     };
 }

@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <memory>
+#include <iostream>
 
 #include <boost/math/constants/constants.hpp>
 
@@ -33,6 +34,11 @@ namespace NAO {
         m_tactile_sub = m_nodeHandle.subscribe("/tactile_touch", 1, &NaoControl::tactile_callback, this);
 
         m_spin_thread = std::make_unique<boost::thread>(boost::bind(&NaoControl::spin_thread, this));
+
+        Bumper_sensor_state = from<naoqi_bridge_msgs::Bumper>(m_nodeHandle, "/bumper");
+        Hand_touch_sensor_state = from<naoqi_bridge_msgs::HandTouch>(m_nodeHandle, "/tactile_touch");
+        Joint_sensor_state = from<sensor_msgs::JointState>(m_nodeHandle, "/joint_states");
+
     }
 
     NaoControl::~NaoControl() {
@@ -60,9 +66,9 @@ namespace NAO {
     bool NaoControl::check_joint_limits(sensor_msgs::JointState joints) const {
         std::vector<double> &positions = joints.position;
 
-        for( const auto& keyValue : continuousJoints){
-            const auto& jointSpec = keyValue.second;
-            if (!jointSpec.Value_within_boundary(positions.at(jointSpec.Get_index()))){
+        for (const auto &keyValue : continuousJoints) {
+            const auto &jointSpec = keyValue.second;
+            if (!jointSpec.Value_within_boundary(positions.at(jointSpec.Get_index()))) {
                 return false;
             }
         }
@@ -121,7 +127,7 @@ namespace NAO {
          * TODO tutorial
          */
         std::cout << "adada" << std::endl;
-        Move_joint_to_position_async(ContinuousJoint ::LEFT_SHOULDER_PITCH,-0.56, 0.05)->Block_until_motion_finished();
+        Move_joint_to_position_async(ContinuousJoint::LEFT_SHOULDER_PITCH, -0.56, 0.05)->Block_until_motion_finished();
     }
 
     void NaoControl::Block_until_motion_finished() {
@@ -142,8 +148,7 @@ namespace NAO {
     }
 
 
-
-    NaoControl* NaoControl::Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity) {
+    NaoControl *NaoControl::Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity) {
         auto jointSpec = continuousJoints.find(joint)->second;
         auto goalPositionRadians = degree_to_radians(goalPosition);
         if (!jointSpec.Value_within_boundary(goalPositionRadians))
