@@ -15,10 +15,10 @@ find_package(catkin REQUIRED cmake_modules COMPONENTS
 catkin_package()
 include_directories(
   ${catkin_INCLUDE_DIRS}
-        src/ext/RxCpp/Rx/v2/src
+        ext/RxCpp/Rx/v2/src
 )
 
-add_executable(nao src/main.cpp src/NaoControl.cpp src/NaoControl.h src/Joints.h src/ContinuousJointSpecification.cpp src/ContinuousJointSpecification.h src/DiscreteJointSpecification.cpp src/DiscreteJointSpecification.h src/Interval.cpp src/Interval.h)
+add_executable(nao src/main.cpp src/NAO/NaoControl.cpp src/NAO/NaoControl.h src/NAO/Joints.h src/NAO/ContinuousJointSpecification.cpp src/NAO/ContinuousJointSpecification.h src/NAO/DiscreteJointSpecification.cpp src/NAO/DiscreteJointSpecification.h src/NAO/Interval.cpp src/NAO/Interval.h)
 target_link_libraries(nao ${catkin_LIBRARIES})
 
 find_package(Boost REQUIRED COMPONENTS system thread)

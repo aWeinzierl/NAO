@@ -1,5 +1,5 @@
 #include <ros/init.h>
-#include "NaoControl.h"
+#include "NAO/NaoControl.h"
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "nao_tutorial6");
