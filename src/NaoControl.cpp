@@ -57,27 +57,27 @@ namespace NAO {
     }
 
 // this function checks joint limits of the left arm. You need to provide JointState vector
-    bool NaoControl::check_joint_limits_left_arm(sensor_msgs::JointState joints) {
+    bool NaoControl::check_joint_limits_left_arm(sensor_msgs::JointState joints) const {
         std::vector<double> &positions = joints.position;
 
-        return within_interval_exclusive(positions.at(2), LEFT_SHOULDER_PITCH_LIMITS)
-               && within_interval_exclusive(positions.at(3), LEFT_SHOULDER_ROLL_LIMITS)
-               && within_interval_exclusive(positions.at(4), LEFT_ELBOW_YAW_LIMITS)
-               && within_interval_exclusive(positions.at(5), LEFT_ELBOW_ROLL_LIMITS)
-               && within_interval_exclusive(positions.at(6), LEFT_WRIST_YAW_LIMITS)
-               && LEFT_HAND_STATES.end() != LEFT_HAND_STATES.find(positions.at(7));
+        return continuousJoints.find(ContinuousJoint::LEFT_SHOULDER_PITCH)->second.Value_within_boundary(positions.at(2))
+               &&  continuousJoints.find(ContinuousJoint::LEFT_SHOULDER_ROLL)->second.Value_within_boundary(positions.at(3))
+               &&  continuousJoints.find(ContinuousJoint::LEFT_ELBOW_YAW)->second.Value_within_boundary(positions.at(4))
+               &&  continuousJoints.find(ContinuousJoint::LEFT_ELBOW_ROLL)->second.Value_within_boundary(positions.at(5))
+               &&  continuousJoints.find(ContinuousJoint::LEFT_WRIST_YAW)->second.Value_within_boundary(positions.at(6))
+               &&  discreteJoints.find(DiscreteJoint::LEFT_HAND)->second.Value_valid(positions.at(7));
     }
 
 // this function checks joint limits of the right arm. You need to provide JointState vector
-    bool NaoControl::check_joint_limits_right_arm(sensor_msgs::JointState joints) {
+    bool NaoControl::check_joint_limits_right_arm(sensor_msgs::JointState joints) const {
         std::vector<double> &positions = joints.position;
 
-        return within_interval_exclusive(positions.at(20), RIGHT_SHOULDER_PITCH_LIMITS)
-               && within_interval_exclusive(positions.at(21), RIGHT_SHOULDER_ROLL_LIMITS)
-               && within_interval_exclusive(positions.at(22), RIGHT_ELBOW_YAW_LIMITS)
-               && within_interval_exclusive(positions.at(23), RIGHT_ELBOW_ROLL_LIMITS)
-               && within_interval_exclusive(positions.at(24), RIGHT_WRIST_YAW_LIMITS)
-               && RIGHT_HAND_STATES.end() != RIGHT_HAND_STATES.find(positions.at(25));
+        return continuousJoints.find(ContinuousJoint::RIGHT_SHOULDER_PITCH)->second.Value_within_boundary(positions.at(20))
+               &&  continuousJoints.find(ContinuousJoint::RIGHT_SHOULDER_ROLL)->second.Value_within_boundary(positions.at(21))
+               &&  continuousJoints.find(ContinuousJoint::RIGHT_ELBOW_YAW)->second.Value_within_boundary(positions.at(22))
+               &&  continuousJoints.find(ContinuousJoint::RIGHT_ELBOW_ROLL)->second.Value_within_boundary(positions.at(23))
+               &&  continuousJoints.find(ContinuousJoint::RIGHT_WRIST_YAW)->second.Value_within_boundary(positions.at(24))
+               &&  discreteJoints.find(DiscreteJoint::RIGHT_HAND)->second.Value_valid(positions.at(25));
     }
 
 // this callback recives info about current joint states
@@ -131,152 +131,14 @@ namespace NAO {
          * TODO tutorial
          */
         std::cout << "adada" << std::endl;
-        Pitch_right_shoulder(-0.56, 0.05);
+        Move_joint_to_position_async(ContinuousJoint ::LEFT_SHOULDER_PITCH,-0.56, 0.05)->Block_until_motion_finished();
     }
 
-    void NaoControl::block_until_action_finished() {
+    void NaoControl::Block_until_motion_finished() {
         ros::Rate r_sleep(20);
         while (!m_jointAnglesClient.waitForResult(m_timeOut) && ros::ok()) {
             r_sleep.sleep();
         }
-    }
-
-    void NaoControl::Pitch_left_shoulder_async(float goalPosition, float velocity) {
-        auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_PITCH_LIMITS))
-            throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "LShoulderPitch");
-    }
-
-    void NaoControl::Pitch_left_shoulder(float goalPosition, float velocity) {
-        Pitch_left_shoulder_async(goalPosition, velocity);
-        block_until_action_finished();
-    }
-
-    void NaoControl::Roll_left_shoulder_async(float goalPosition, float velocity) {
-        auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
-            throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "LShoulderRoll");
-    }
-
-    void NaoControl::Roll_left_shoulder(float goalPosition, float velocity) {
-        Roll_left_shoulder_async(goalPosition, velocity);
-        block_until_action_finished();
-    }
-
-    void NaoControl::Yaw_left_elbow_async(float goalPosition, float velocity) {
-        auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
-            throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "LElbowYaw");
-    }
-
-    void NaoControl::Yaw_left_elbow(float goalPosition, float velocity) {
-        Yaw_left_elbow_async(goalPosition, velocity);
-        block_until_action_finished();
-    }
-
-    void NaoControl::Roll_left_elbow_async(float goalPosition, float velocity) {
-        auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
-            throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "LElbowRoll");
-    }
-
-    void NaoControl::Roll_left_elbow(float goalPosition, float velocity) {
-        Roll_left_elbow_async(goalPosition, velocity);
-        block_until_action_finished();
-    }
-
-    void NaoControl::Yaw_left_wrist_async(float goalPosition, float velocity) {
-        auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
-            throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "LWristYaw");
-    }
-
-    void NaoControl::Yaw_left_wrist(float goalPosition, float velocity) {
-        Yaw_left_wrist_async(goalPosition, velocity);
-        block_until_action_finished();
-    }
-
-    void NaoControl::Adjust_left_hand_positionAsync(NaoControl::HAND_POSITION goalPosition, float velocity) {
-        create_and_sendAction(static_cast<double>(goalPosition), velocity, "LHand");
-    }
-
-    void NaoControl::Adjust_left_hand_position(NaoControl::HAND_POSITION goalPosition, float velocity) {
-        Adjust_left_hand_positionAsync(goalPosition, velocity);
-        block_until_action_finished();
-    }
-
-    void NaoControl::Pitch_right_shoulder_async(float goalPosition, float velocity) {
-        auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_PITCH_LIMITS))
-            throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "RShoulderPitch");
-    }
-
-    void NaoControl::Pitch_right_shoulder(float goalPosition, float velocity) {
-        Pitch_right_shoulder_async(goalPosition, velocity);
-        block_until_action_finished();
-    }
-
-    void NaoControl::Roll_right_shoulder_async(float goalPosition, float velocity) {
-        auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
-            throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "RShoulderRoll");
-    }
-
-    void NaoControl::Roll_right_shoulder(float goalPosition, float velocity) {
-        Roll_right_shoulder_async(goalPosition, velocity);
-        block_until_action_finished();
-    }
-
-    void NaoControl::Yaw_right_elbow_async(float goalPosition, float velocity) {
-        auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
-            throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "RElbowYaw");
-    }
-
-    void NaoControl::Yaw_right_elbow(float goalPosition, float velocity) {
-        Yaw_right_elbow_async(goalPosition, velocity);
-        block_until_action_finished();
-    }
-
-    void NaoControl::Roll_right_elbow_async(float goalPosition, float velocity) {
-        auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
-            throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "RElbowRoll");
-    }
-
-    void NaoControl::Roll_right_elbow(float goalPosition, float velocity) {
-        Roll_right_elbow_async(goalPosition, velocity);
-        block_until_action_finished();
-    }
-
-    void NaoControl::Yaw_right_wrist_async(float goalPosition, float velocity) {
-        auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, RIGHT_SHOULDER_ROLL_LIMITS))
-            throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "RWristYaw");
-    }
-
-    void NaoControl::Yaw_right_wrist(float goalPosition, float velocity) {
-        Yaw_right_wrist_async(goalPosition, velocity);
-        block_until_action_finished();
-    }
-
-    void NaoControl::Adjust_right_hand_positionAsync(NaoControl::HAND_POSITION goalPosition, float velocity) {
-        create_and_sendAction(static_cast<double>(goalPosition), velocity, "RHand");
-    }
-
-    void NaoControl::Adjust_right_hand_position(NaoControl::HAND_POSITION goalPosition, float velocity) {
-        Adjust_right_hand_positionAsync(goalPosition, velocity);
-        block_until_action_finished();
     }
 
     naoqi_bridge_msgs::JointAnglesWithSpeedGoal NaoControl::create_and_sendAction(float jointGoalAngle, float velocity,
@@ -289,29 +151,25 @@ namespace NAO {
         m_jointAnglesClient.sendGoal(action);
     }
 
-    void NaoControl::Pitch_head(float goalPosition, float velocity) {
-        Pitch_head_async(goalPosition,velocity);
-        block_until_action_finished();
 
-    }
 
-    void NaoControl::Pitch_head_async(float goalPosition, float velocity) {
+    NaoControl* NaoControl::Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity) {
+        auto jointSpec = continuousJoints.find(joint)->second;
         auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, HEAD_PITCH_LIMITS))
+        if (!jointSpec.Value_within_boundary(goalPositionRadians))
             throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "HeadPitch");
+        create_and_sendAction(goalPositionRadians, velocity, jointSpec.Get_name());
+
+        return this;
     }
 
-    void NaoControl::Yaw_head(float goalPosition, float velocity) {
-        Yaw_head_async(goalPosition,velocity);
-        block_until_action_finished();
-
-    }
-
-    void NaoControl::Yaw_head_async(float goalPosition, float velocity) {
-        auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!within_interval_exclusive(goalPositionRadians, HEAD_YAW_LIMITS))
+    NaoControl *NaoControl::Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity) {
+        auto jointSpec = discreteJoints.find(joint)->second;
+        if (!jointSpec.Value_valid(goalPosition))
             throw std::out_of_range("goalPosition");
-        create_and_sendAction(goalPositionRadians, velocity, "HeadYaw");
+        create_and_sendAction(goalPosition, velocity, jointSpec.Get_name());
+
+        return this;
     }
+
 }

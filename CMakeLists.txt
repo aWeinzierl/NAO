@@ -18,7 +18,7 @@ include_directories(
         src/ext/RxCpp/Rx/v2/src
 )
 
-add_executable(nao src/main.cpp src/NaoControl.cpp src/NaoControl.h)
+add_executable(nao src/main.cpp src/NaoControl.cpp src/NaoControl.h src/Joints.h src/ContinuousJointSpecification.cpp src/ContinuousJointSpecification.h src/DiscreteJointSpecification.cpp src/DiscreteJointSpecification.h src/Interval.cpp src/Interval.h)
 target_link_libraries(nao ${catkin_LIBRARIES})
 
 find_package(Boost REQUIRED COMPONENTS system thread)

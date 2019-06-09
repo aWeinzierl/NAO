@@ -1,27 +1,26 @@
 #pragma once
 
+#include <unordered_set>
+#include <unordered_map>
+
 #include <boost/thread.hpp>
 #include <naoqi_bridge_msgs/JointAnglesWithSpeedAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include <naoqi_bridge_msgs/Bumper.h>
 #include <naoqi_bridge_msgs/HandTouch.h>
-#include <unordered_set>
+
+#include "Joints.h"
+#include "ContinuousJointSpecification.h"
+#include "DiscreteJointSpecification.h"
 
 namespace NAO {
 
     typedef actionlib::SimpleActionClient<naoqi_bridge_msgs::JointAnglesWithSpeedAction> JointAnglesClient;
 
-    struct Interval {
-        constexpr Interval(double lowerLimit, double upperLimit) : lowerLimit(lowerLimit), upperLimit(upperLimit) {}
-
-        float lowerLimit;
-        float upperLimit;
-    };
-
-    struct ApproximatelyEqual {
-        template<typename KeyType>
-        bool operator()(const KeyType &lhs, const KeyType &rhs) const {
-            return std::abs(lhs - rhs) < std::numeric_limits<KeyType>::epsilon();
+    struct EnumClassHash {
+        template<typename T>
+        std::size_t operator()(T t) const {
+            return static_cast<std::size_t>(t);
         }
     };
 
@@ -33,6 +32,7 @@ namespace NAO {
             CLOSED = 1
         };
 
+
         NaoControl();
 
         ~NaoControl();
@@ -40,91 +40,49 @@ namespace NAO {
         // this is main loop which should send commands to the nao arms.
         void publish_joint_states();
 
-        static constexpr Interval HEAD_PITCH_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
-        static constexpr Interval HEAD_YAW_LIMITS = Interval(-0.6720, 0.5149); // NOLINT(cert-err58-cpp)
+        const std::unordered_map<ContinuousJoint, ContinuousJointSpecification, EnumClassHash> continuousJoints{
+                {ContinuousJoint::HEAD_PITCH,           ContinuousJointSpecification("HeadPitch",
+                                                                                     Interval(-2.0857, 2.0857))},
+                {ContinuousJoint::HEAD_YAW,             ContinuousJointSpecification("HeadYaw",
+                                                                                     Interval(-0.6720, 0.5149))},
 
-        static constexpr Interval LEFT_SHOULDER_PITCH_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
-        static constexpr Interval LEFT_SHOULDER_ROLL_LIMITS = Interval(-0.3142, 1.3265); // NOLINT(cert-err58-cpp)
-        static constexpr Interval LEFT_ELBOW_YAW_LIMITS = Interval(-2.0857, 2.0857); // NOLINT(cert-err58-cpp)
-        static constexpr Interval LEFT_ELBOW_ROLL_LIMITS = Interval(-1.5446, -0.0349); // NOLINT(cert-err58-cpp)
-        static constexpr Interval LEFT_WRIST_YAW_LIMITS = Interval(-1.8238, 1.8238); // NOLINT(cert-err58-cpp)
-        const std::unordered_set<
-                double,
-                std::unordered_set<double>::hasher,
-                ApproximatelyEqual,
-                std::unordered_set<double>::allocator_type> LEFT_HAND_STATES = {
-                static_cast<double>(HAND_POSITION::OPEN),
-                static_cast<double>(HAND_POSITION::CLOSED)
+                {ContinuousJoint::LEFT_SHOULDER_PITCH,  ContinuousJointSpecification("LShoulderPitch",
+                                                                                     Interval(-2.0857, 2.0857))},
+                {ContinuousJoint::LEFT_SHOULDER_ROLL,   ContinuousJointSpecification("LShoulderRoll",
+                                                                                     Interval(-0.3142, 1.3265))},
+                {ContinuousJoint::LEFT_ELBOW_YAW,       ContinuousJointSpecification("LElbowYaw",
+                                                                                     Interval(-2.0857, 2.0857))},
+                {ContinuousJoint::LEFT_ELBOW_ROLL,      ContinuousJointSpecification("LElbowRoll",
+                                                                                     Interval(-1.5446, -0.0349))},
+                {ContinuousJoint::LEFT_WRIST_YAW,       ContinuousJointSpecification("LWristYaw",
+                                                                                     Interval(-1.8238, 1.8238))},
+
+                {ContinuousJoint::RIGHT_SHOULDER_PITCH, ContinuousJointSpecification("RShoulderPitch",
+                                                                                     Interval(-2.0857, 2.0857))},
+                {ContinuousJoint::RIGHT_SHOULDER_ROLL,  ContinuousJointSpecification("RShoulderRoll",
+                                                                                     Interval(-1.3265, 0.3142))},
+                {ContinuousJoint::RIGHT_ELBOW_YAW,      ContinuousJointSpecification("RElbowYaw",
+                                                                                     Interval(-2.0857, 2.0857))},
+                {ContinuousJoint::RIGHT_ELBOW_ROLL,     ContinuousJointSpecification("RElbowRoll",
+                                                                                     Interval(0.0349, 1.5446))},
+                {ContinuousJoint::RIGHT_WRIST_YAW,      ContinuousJointSpecification("RWristYaw",
+                                                                                     Interval(-1.8238, 1.8238))},
         };
 
+        const std::unordered_map<DiscreteJoint, DiscreteJointSpecification, EnumClassHash> discreteJoints{
+                {DiscreteJoint::LEFT_HAND, DiscreteJointSpecification("LHand", {
+                        static_cast<double>(HAND_POSITION::OPEN),
+                        static_cast<double>(HAND_POSITION::CLOSED)
+                })},
+                {DiscreteJoint::RIGHT_HAND, DiscreteJointSpecification("RHand", {
+                                                                         static_cast<double>(HAND_POSITION::OPEN),
+                                                                         static_cast<double>(HAND_POSITION::CLOSED)
+                })},
+        };
 
-        static constexpr Interval RIGHT_SHOULDER_PITCH_LIMITS = LEFT_SHOULDER_PITCH_LIMITS;
-        static constexpr Interval RIGHT_SHOULDER_ROLL_LIMITS = Interval(-1.3265, 0.3142); // NOLINT(cert-err58-cpp)
-        static constexpr Interval RIGHT_ELBOW_YAW_LIMITS = LEFT_ELBOW_YAW_LIMITS;
-        static constexpr Interval RIGHT_ELBOW_ROLL_LIMITS = Interval(0.0349, 1.5446); // NOLINT(cert-err58-cpp)
-        static constexpr Interval RIGHT_WRIST_YAW_LIMITS = LEFT_WRIST_YAW_LIMITS;
-        const std::unordered_set<
-                double,
-                std::unordered_set<double>::hasher,
-                ApproximatelyEqual,
-                std::unordered_set<double>::allocator_type> RIGHT_HAND_STATES = LEFT_HAND_STATES;
-
-        void Pitch_head(float goalPosition, float velocity);
-
-        void Pitch_head_async(float goalPosition, float velocity);
-
-        void Yaw_head(float goalPosition, float velocity);
-
-        void Yaw_head_async(float goalPosition, float velocity);
-
-        void Pitch_left_shoulder(float goalPosition, float velocity);
-
-        void Pitch_left_shoulder_async(float goalPosition, float velocity);
-
-        void Roll_left_shoulder(float goalPosition, float velocity);
-
-        void Roll_left_shoulder_async(float goalPosition, float velocity);
-
-        void Yaw_left_elbow(float goalPosition, float velocity);
-
-        void Yaw_left_elbow_async(float goalPosition, float velocity);
-
-        void Roll_left_elbow(float goalPosition, float velocity);
-
-        void Roll_left_elbow_async(float goalPosition, float velocity);
-
-        void Yaw_left_wrist(float goalPosition, float velocity);
-
-        void Yaw_left_wrist_async(float goalPosition, float velocity);
-
-        void Adjust_left_hand_position(HAND_POSITION goalPosition, float velocity);
-
-        void Adjust_left_hand_positionAsync(HAND_POSITION goalPosition, float velocity);
-
-        void Pitch_right_shoulder(float goalPosition, float velocity);
-
-        void Pitch_right_shoulder_async(float goalPosition, float velocity);
-
-        void Roll_right_shoulder(float goalPosition, float velocity);
-
-        void Roll_right_shoulder_async(float goalPosition, float velocity);
-
-        void Yaw_right_elbow(float goalPosition, float velocity);
-
-        void Yaw_right_elbow_async(float goalPosition, float velocity);
-
-        void Roll_right_elbow(float goalPosition, float velocity);
-
-        void Roll_right_elbow_async(float goalPosition, float velocity);
-
-        void Yaw_right_wrist(float goalPosition, float velocity);
-
-        void Yaw_right_wrist_async(float goalPosition, float velocity);
-
-        void Adjust_right_hand_position(HAND_POSITION goalPosition, float velocity);
-
-        void Adjust_right_hand_positionAsync(HAND_POSITION goalPosition, float velocity);
-
+        NaoControl* Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity);
+        NaoControl* Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity);
+        void Block_until_motion_finished();
 
     private:
 
@@ -163,18 +121,18 @@ namespace NAO {
         static constexpr bool within_interval_exclusive(double value, const Interval &interval);
 
         // this function checks joint limits of the left arm. You need to provide JointState vector
-        bool check_joint_limits_left_arm(sensor_msgs::JointState joints);
+        bool check_joint_limits_left_arm(sensor_msgs::JointState joints) const;
 
         // this function checks joint limits of the right arm. You need to provide JointState vector
-        bool check_joint_limits_right_arm(sensor_msgs::JointState joints);
+        bool check_joint_limits_right_arm(sensor_msgs::JointState joints)const ;
 
         // this callback recives info about current joint states
         void sensor_callback(const sensor_msgs::JointState::ConstPtr &jointState);
 
-        void block_until_action_finished();
 
         naoqi_bridge_msgs::JointAnglesWithSpeedGoal create_and_sendAction(float jointGoalAngle, float velocity,
                                                                           const std::string &jointName);
+
         double degree_to_radians(double angle) const noexcept;
 
         void spin_thread();
