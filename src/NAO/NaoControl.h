@@ -87,9 +87,9 @@ namespace NAO {
 
         void Block_until_motion_finished();
 
-        rxcpp::observable<naoqi_bridge_msgs::Bumper> Bumper_sensor_state;
-        rxcpp::observable<naoqi_bridge_msgs::HandTouch> Hand_touch_sensor_state;
-        rxcpp::observable<sensor_msgs::JointState> Joint_sensor_state;
+        rxcpp::observable<naoqi_bridge_msgs::Bumper::ConstPtr> Bumper_sensor_state;
+        rxcpp::observable<naoqi_bridge_msgs::HandTouch::ConstPtr> Hand_touch_sensor_state;
+        rxcpp::observable<sensor_msgs::JointState::ConstPtr> Joint_sensor_state;
 
     private:
 

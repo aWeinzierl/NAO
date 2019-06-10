@@ -37,10 +37,9 @@ namespace NAO {
 
         m_spin_thread = stdExtension::make_unique<boost::thread>(boost::bind(&NaoControl::spin_thread, this));
 
-        Bumper_sensor_state = from<naoqi_bridge_msgs::Bumper>(m_nodeHandle, "/bumper");
-        Hand_touch_sensor_state = from<naoqi_bridge_msgs::HandTouch>(m_nodeHandle, "/tactile_touch");
-        Joint_sensor_state = from<sensor_msgs::JointState>(m_nodeHandle, "/joint_states");
-
+        Bumper_sensor_state = from<naoqi_bridge_msgs::Bumper::ConstPtr>(m_nodeHandle, "/bumper");
+        Hand_touch_sensor_state = from<naoqi_bridge_msgs::HandTouch::ConstPtr>(m_nodeHandle, "/tactile_touch");
+        Joint_sensor_state = from<sensor_msgs::JointState::ConstPtr>(m_nodeHandle, "/joint_states");
     }
 
     NaoControl::~NaoControl() {
