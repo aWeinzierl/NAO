@@ -1,3 +1,5 @@
 <launch>
+    <include file="$(find nao_bringup)/launch/nao_full_py.launch"/>
+    <include file="$(find nao_apps)/launch/tactile.launch"/>
     <node name="nao" pkg="nao" type="nao" />
 </launch>
