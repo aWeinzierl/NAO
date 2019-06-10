@@ -7,7 +7,7 @@
 #include <naoqi_bridge_msgs/JointAnglesWithSpeedAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include <naoqi_bridge_msgs/Bumper.h>
-#include <naoqi_bridge_msgs/HandTouch.h>
+#include <naoqi_bridge_msgs/HeadTouch.h>
 #include <rxcpp/rx.hpp>
 
 #include "Joints.h"
@@ -43,9 +43,9 @@ namespace NAO {
 
         const std::unordered_map<ContinuousJoint, ContinuousJointSpecification, EnumClassHash> continuousJoints{
                 {ContinuousJoint::HEAD_PITCH,           ContinuousJointSpecification("HeadPitch",
-                                                                                     Interval(-2.0857, 2.0857), 0)},
+                                                                                     Interval(-2.0857, 2.0857), 1)},
                 {ContinuousJoint::HEAD_YAW,             ContinuousJointSpecification("HeadYaw",
-                                                                                     Interval(-0.6720, 0.5149), 1)},
+                                                                                     Interval(-0.6720, 0.5149), 0)},
 
                 {ContinuousJoint::LEFT_SHOULDER_PITCH,  ContinuousJointSpecification("LShoulderPitch",
                                                                                      Interval(-2.0857, 2.0857), 2)},
@@ -87,9 +87,9 @@ namespace NAO {
 
         void SubscribeToSensor(Bumper bumper, const boost::function<void(bool pressed )>& callback);
 
-        void SubscribeToSensor(ContinuousJoint joint, boost::function<void(const naoqi_bridge_msgs::Bumper::ConstPtr &)> callback);
+        void SubscribeToSensor(ContinuousJoint joint, const boost::function<void(double angle)>& callback);
 
-        void SubscribeToSensor(HeadTouch bumper, boost::function<void(const naoqi_bridge_msgs::Bumper::ConstPtr &)> callback);
+        void SubscribeToSensor(HeadTouch headTouch, const boost::function<void(bool pressed)>& callback);
 
 
         void Block_until_motion_finished();
@@ -97,7 +97,7 @@ namespace NAO {
         void Unblock();
 
         rxcpp::observable<naoqi_bridge_msgs::Bumper::ConstPtr> Bumper_sensor_state;
-        rxcpp::observable<naoqi_bridge_msgs::HandTouch::ConstPtr> Hand_touch_sensor_state;
+        rxcpp::observable<naoqi_bridge_msgs::HeadTouch::ConstPtr> Hand_touch_sensor_state;
         rxcpp::observable<sensor_msgs::JointState::ConstPtr> Joint_sensor_state;
 
     private:
@@ -132,7 +132,7 @@ namespace NAO {
         void bumper_callback(const naoqi_bridge_msgs::Bumper::ConstPtr &bumperState);
 
         // this callback provides information about current head tactile buttons.
-        void tactile_callback(const naoqi_bridge_msgs::HandTouch::ConstPtr &tactileState);
+        void tactile_callback(const naoqi_bridge_msgs::HeadTouch::ConstPtr &tactileState);
 
         static constexpr bool within_interval_exclusive(double value, const Interval &interval);
 
@@ -151,5 +151,9 @@ namespace NAO {
         void spin_thread();
 
         std::unordered_map<Bumper, std::vector<boost::function<void(bool pressed)>>, EnumClassHash> m_bumper_callbacks;
+        std::unordered_map<ContinuousJoint, std::vector<boost::function<void(double angle)>>, EnumClassHash> m_c_joints_callbacks;
+        std::unordered_map<HeadTouch, std::vector<boost::function<void(double angle)>>, EnumClassHash> m_head_touch_callbacks;
+
+        double radian_to_degrees(const double angle) const noexcept;
     };
 }

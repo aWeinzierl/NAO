@@ -19,6 +19,23 @@ namespace NAO {
         RIGHT_WRIST_YAW,
     };
 
+    static constexpr const ContinuousJoint AllContinuousJoints[] = {
+            ContinuousJoint::HEAD_YAW,
+            ContinuousJoint::HEAD_PITCH,
+
+            ContinuousJoint::LEFT_SHOULDER_PITCH,
+            ContinuousJoint::LEFT_SHOULDER_ROLL,
+            ContinuousJoint::LEFT_ELBOW_YAW,
+            ContinuousJoint::LEFT_ELBOW_ROLL,
+            ContinuousJoint::LEFT_WRIST_YAW,
+
+            ContinuousJoint::RIGHT_SHOULDER_PITCH,
+            ContinuousJoint::RIGHT_SHOULDER_ROLL,
+            ContinuousJoint::RIGHT_ELBOW_YAW,
+            ContinuousJoint::RIGHT_ELBOW_ROLL,
+            ContinuousJoint::RIGHT_WRIST_YAW,
+    };
+
     enum class DiscreteJoint {
         LEFT_HAND,
         RIGHT_HAND,
@@ -31,8 +48,8 @@ namespace NAO {
     };
 
     enum class HeadTouch {
-        FRONT_HEAD_TOUCH,
-        MIDDLE_HEAD_TOUCH,
-        BACK_HEAD_TOUCH
+        FRONT_HEAD_TOUCH = 1,
+        MIDDLE_HEAD_TOUCH = 2,
+        BACK_HEAD_TOUCH = 3,
     };
 }

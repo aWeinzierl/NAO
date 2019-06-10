@@ -22,6 +22,11 @@ namespace NAO {
         return angle / 180 * boost::math::constants::pi<double>();
     }
 
+    double NaoControl::radian_to_degrees(const double angle) const noexcept {
+        return angle * 180 / boost::math::constants::pi<double>();
+    }
+
+
     NaoControl::NaoControl() : m_jointAnglesClient("/joint_angles_action", true), m_timeOut(10) {
 
         m_stop_thread = false;
@@ -40,6 +45,15 @@ namespace NAO {
         m_bumper_callbacks[Bumper::BACK_BUMPER] = {};
         m_bumper_callbacks[Bumper::LEFT_BUMPER] = {};
         m_bumper_callbacks[Bumper::RIGHT_BUMPER] = {};
+        m_head_touch_callbacks[HeadTouch::FRONT_HEAD_TOUCH] = {};
+        m_head_touch_callbacks[HeadTouch::MIDDLE_HEAD_TOUCH] = {};
+        m_head_touch_callbacks[HeadTouch::BACK_HEAD_TOUCH] = {};
+
+        for (const auto &joint: AllContinuousJoints) {
+            m_c_joints_callbacks[joint] = {};
+        }
+
+        m_jointAnglesClient.waitForServer();
     }
 
     NaoControl::~NaoControl() {
@@ -52,15 +66,17 @@ namespace NAO {
     void NaoControl::bumper_callback(const naoqi_bridge_msgs::Bumper::ConstPtr &bumperState) {
 
         auto callbacks = m_bumper_callbacks.find(static_cast<Bumper>(bumperState->bumper))->second;
-        for (const auto & callback :callbacks){
+        for (const auto &callback :callbacks) {
             callback(bumperState->state);
         }
     }
 
 // this callback provides information about current head tactile buttons.
-    void NaoControl::tactile_callback(const naoqi_bridge_msgs::HandTouch::ConstPtr &tactileState) {
-
-
+    void NaoControl::tactile_callback(const naoqi_bridge_msgs::HeadTouch::ConstPtr &tactileState) {
+        auto callbacks = m_head_touch_callbacks.find(static_cast<HeadTouch >(tactileState->button))->second;
+        for (const auto &callback :callbacks) {
+            callback(tactileState->state);
+        }
     }
 
     constexpr bool NaoControl::within_interval_exclusive(double value, const Interval &interval) {
@@ -83,6 +99,17 @@ namespace NAO {
 
 // this callback recives info about current joint states
     void NaoControl::sensor_callback(const sensor_msgs::JointState::ConstPtr &jointState) {
+
+        for (const auto &keyValue: m_c_joints_callbacks) {
+            auto &callbacks = keyValue.second;
+            auto index = continuousJoints.find(keyValue.first)->second.Get_index();
+            auto value = jointState->position.at(index);
+            auto valueInDegrees = radian_to_degrees(value);
+            for (const auto &callback : callbacks) {
+                callback(valueInDegrees);
+            }
+        }
+
         m_current_left_arm_state.name.clear();
         m_current_left_arm_state.position.clear();
         m_current_right_arm_state.name.clear();
@@ -161,6 +188,8 @@ namespace NAO {
         auto jointSpec = jointSpecPtr->second;
 
         auto goalPositionRadians = degree_to_radians(goalPosition);
+        std::cout << std::endl << "joint: " << continuousJoints.find(joint)->second.Get_name() << std::endl;
+        std::cout << "radions: " << goalPositionRadians << "      " << std::endl;
         if (!jointSpec.Value_within_boundary(goalPositionRadians)) {
             std::cout << "std::out_of_range(\"goalPosition\")" << std::flush;
             throw std::out_of_range(
@@ -193,9 +222,20 @@ namespace NAO {
     }
 
     void NaoControl::SubscribeToSensor(Bumper bumper,
-                                       const boost::function<void(bool pressed)>& callback) {
+                                       const boost::function<void(bool pressed)> &callback) {
         m_bumper_callbacks[bumper].push_back(callback);
-        std::cout << static_cast<unsigned char>(bumper)<< std::flush;
     }
 
+    void NaoControl::SubscribeToSensor(ContinuousJoint joint,
+                                       const boost::function<void(double angle)>& callback) {
+        m_c_joints_callbacks[joint].push_back(callback);
+    }
+
+    void NaoControl::SubscribeToSensor(HeadTouch headTouch,
+                                       const boost::function<void(bool pressed)>& callback) {
+        m_head_touch_callbacks[headTouch].push_back(callback);
+    }
 }
+
+
+//10.152.246.74
