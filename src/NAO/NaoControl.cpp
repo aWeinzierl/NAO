@@ -129,7 +129,7 @@ namespace NAO {
          * TODO tutorial
          */
         std::cout << "adada" << std::endl;
-        Move_joint_to_position_async(ContinuousJoint::LEFT_SHOULDER_PITCH, -0.56, 0.05)->Block_until_motion_finished();
+        Move_joint_to_position_async(ContinuousJoint::LEFT_SHOULDER_PITCH, -0.56, 0.05).Block_until_motion_finished();
     }
 
     void NaoControl::Block_until_motion_finished() {
@@ -149,23 +149,35 @@ namespace NAO {
     }
 
 
-    NaoControl *NaoControl::Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity) {
-        auto jointSpec = continuousJoints.find(joint)->second;
+    NaoControl &NaoControl::Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity) {
+        auto jointSpecPtr = continuousJoints.find(joint);
+        if (jointSpecPtr == continuousJoints.end()) {
+            std::cout << "joint not implemented" << std::flush;
+            throw std::logic_error("joint not implemented");
+        }
+        auto jointSpec = jointSpecPtr->second;
+
         auto goalPositionRadians = degree_to_radians(goalPosition);
-        if (!jointSpec.Value_within_boundary(goalPositionRadians))
-            throw std::out_of_range("goalPosition");
+        if (!jointSpec.Value_within_boundary(goalPositionRadians)) {
+            std::cout << "std::out_of_range(\"goalPosition\")" << std::flush;
+            throw std::out_of_range(
+                    "goalPosition = " + std::to_string(goalPositionRadians) + " <-> [" +
+                    std::to_string(jointSpec.Get_value_range().lowerLimit) + " ; " +
+                    std::to_string(jointSpec.Get_value_range().upperLimit) + "]");
+        }
+
         create_and_sendAction(goalPositionRadians, velocity, jointSpec.Get_name());
 
-        return this;
+        return *this;
     }
 
-    NaoControl *NaoControl::Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity) {
+    NaoControl &NaoControl::Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity) {
         auto jointSpec = discreteJoints.find(joint)->second;
         if (!jointSpec.Value_valid(goalPosition))
             throw std::out_of_range("goalPosition");
         create_and_sendAction(goalPosition, velocity, jointSpec.Get_name());
 
-        return this;
+        return *this;
     }
 
 }

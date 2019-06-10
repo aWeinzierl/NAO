@@ -81,9 +81,9 @@ namespace NAO {
                 }, 25)},
         };
 
-        NaoControl *Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity);
+        NaoControl& Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity);
 
-        NaoControl *Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity);
+        NaoControl& Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity);
 
         void Block_until_motion_finished();
 

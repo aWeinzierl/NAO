@@ -6,12 +6,12 @@ int main(int argc, char **argv) {
     NAO::NaoControl ic;
     sleep(2);
 
-    ic.Move_joint_to_position_async(NAO::ContinuousJoint::RIGHT_SHOULDER_PITCH, -0.5,
-                                    0.05)->Block_until_motion_finished();
-    ic.Move_joint_to_position_async(NAO::ContinuousJoint::RIGHT_ELBOW_YAW, 0, 0.05)->Block_until_motion_finished();
-    ic.Move_joint_to_position_async(NAO::ContinuousJoint::LEFT_SHOULDER_PITCH, -0.5,
-                                    0.05)->Block_until_motion_finished();
-    ic.Move_joint_to_position_async(NAO::ContinuousJoint::LEFT_ELBOW_YAW, 0, 0.05)->Block_until_motion_finished();
+    ic.Move_joint_to_position_async(NAO::ContinuousJoint::RIGHT_SHOULDER_PITCH,0,
+                                    0.05).Block_until_motion_finished();
+    ic.Move_joint_to_position_async(NAO::ContinuousJoint::RIGHT_ELBOW_YAW, -50, 0.05).Block_until_motion_finished();
+    ic.Move_joint_to_position_async(NAO::ContinuousJoint::LEFT_SHOULDER_PITCH, 0,
+                                    0.05).Block_until_motion_finished();
+    ic.Move_joint_to_position_async(NAO::ContinuousJoint::LEFT_ELBOW_YAW, 50, 0.05).Block_until_motion_finished();
 
 
     ic.Bumper_sensor_state.with_latest_from(ic.Joint_sensor_state).subscribe(
