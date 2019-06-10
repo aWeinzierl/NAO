@@ -141,17 +141,5 @@ namespace NAO {
 
         void spin_thread();
 
-        template<typename T>
-        rxcpp::observable<T> from(ros::NodeHandle &nodeHandle, std::string topic) {
-            return rxcpp::sources::create<T>(
-                    [&nodeHandle, topic](rxcpp::subscriber<T> out) {
-                        boost::function<void(const T &)> callback =
-                                [=](const T &msg) {
-                                    out.on_next(msg);
-                                    std::cout << "works";
-                                };
-                        auto token = nodeHandle.subscribe<T>(topic, 1, callback);
-                    });
-        }
     };
 }
