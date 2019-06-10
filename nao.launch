@@ -1,0 +1,3 @@
+<launch>
+    <node name="nao" pkg="nao" type="nao" />
+</launch>

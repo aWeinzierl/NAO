@@ -1,6 +1,6 @@
 #include "ContinuousJointSpecification.h"
 
-std::string NAO::ContinuousJointSpecification::Get_name() const {
+const std::string& NAO::ContinuousJointSpecification::Get_name() const {
     return m_name;
 }
 

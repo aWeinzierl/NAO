@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(nao)
 
-add_definitions(-std=c++14)
+add_definitions(-std=c++11)
 
 find_package(catkin REQUIRED cmake_modules COMPONENTS
   roscpp
@@ -18,7 +18,7 @@ include_directories(
         ext/RxCpp/Rx/v2/src
 )
 
-add_executable(nao src/main.cpp src/NAO/NaoControl.cpp src/NAO/NaoControl.h src/NAO/Joints.h src/NAO/ContinuousJointSpecification.cpp src/NAO/ContinuousJointSpecification.h src/NAO/DiscreteJointSpecification.cpp src/NAO/DiscreteJointSpecification.h src/NAO/Interval.cpp src/NAO/Interval.h)
+add_executable(nao src/main.cpp src/NAO/NaoControl.cpp src/NAO/NaoControl.h src/NAO/Joints.h src/NAO/ContinuousJointSpecification.cpp src/NAO/ContinuousJointSpecification.h src/NAO/DiscreteJointSpecification.cpp src/NAO/DiscreteJointSpecification.h src/NAO/Interval.cpp src/NAO/Interval.h src/StdExtension/MakeUnique.h src/NAO/ClassEnumHash.h)
 target_link_libraries(nao ${catkin_LIBRARIES})
 
 find_package(Boost REQUIRED COMPONENTS system thread)
