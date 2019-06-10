@@ -1,5 +1,5 @@
 #include "Interval.h"
 
-namespace  NAO{
+namespace NAO {
 
 }

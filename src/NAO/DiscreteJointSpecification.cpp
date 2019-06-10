@@ -19,7 +19,7 @@ namespace NAO {
             std::unordered_set<double>::hasher,
             ApproximatelyEqual,
             std::unordered_set<double>::allocator_type> valueSet, uint index)
-            :m_name(std::move(name)), m_value_set(std::move(valueSet)), m_index(index){
+            : m_name(std::move(name)), m_value_set(std::move(valueSet)), m_index(index) {
 
     }
 

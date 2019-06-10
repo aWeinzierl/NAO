@@ -168,12 +168,12 @@ namespace NAO {
     }
 
     void NaoControl::SubscribeToSensor(ContinuousJoint joint,
-                                       const boost::function<void(double angle)>& callback) {
+                                       const boost::function<void(double angle)> &callback) {
         m_c_joints_callbacks[joint].push_back(callback);
     }
 
     void NaoControl::SubscribeToSensor(HeadTouch headTouch,
-                                       const boost::function<void(bool pressed)>& callback) {
+                                       const boost::function<void(bool pressed)> &callback) {
         m_head_touch_callbacks[headTouch].push_back(callback);
     }
 }

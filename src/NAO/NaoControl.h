@@ -80,19 +80,21 @@ namespace NAO {
                 }, 25)},
         };
 
-        NaoControl& Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity);
+        NaoControl &Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity);
 
-        NaoControl& Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity);
+        NaoControl &Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity);
 
-        void SubscribeToSensor(Bumper bumper, const boost::function<void(bool pressed )>& callback);
+        void SubscribeToSensor(Bumper bumper, const boost::function<void(bool pressed)> &callback);
 
-        void SubscribeToSensor(ContinuousJoint joint, const boost::function<void(double angle)>& callback);
+        void SubscribeToSensor(ContinuousJoint joint, const boost::function<void(double angle)> &callback);
 
-        void SubscribeToSensor(HeadTouch headTouch, const boost::function<void(bool pressed)>& callback);
+        void SubscribeToSensor(HeadTouch headTouch, const boost::function<void(bool pressed)> &callback);
 
 
         void Block_until_motion_finished();
+
         void Block_forever();
+
         void Unblock();
 
     private:
@@ -134,8 +136,10 @@ namespace NAO {
         void spin_thread();
 
         std::unordered_map<Bumper, std::vector<boost::function<void(bool pressed)>>, EnumClassHash> m_bumper_callbacks;
-        std::unordered_map<ContinuousJoint, std::vector<boost::function<void(double angle)>>, EnumClassHash> m_c_joints_callbacks;
-        std::unordered_map<HeadTouch, std::vector<boost::function<void(double angle)>>, EnumClassHash> m_head_touch_callbacks;
+        std::unordered_map<ContinuousJoint, std::vector<boost::function<void(
+                double angle)>>, EnumClassHash> m_c_joints_callbacks;
+        std::unordered_map<HeadTouch, std::vector<boost::function<void(
+                double angle)>>, EnumClassHash> m_head_touch_callbacks;
 
         double radian_to_degrees(const double angle) const noexcept;
 

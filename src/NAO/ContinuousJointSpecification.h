@@ -9,11 +9,11 @@ namespace NAO {
     struct ContinuousJointSpecification {
     public:
 
-        ContinuousJointSpecification(std::string name, const Interval& valueRange, uint index);
+        ContinuousJointSpecification(std::string name, const Interval &valueRange, uint index);
 
-        const std::string& Get_name() const;
+        const std::string &Get_name() const;
 
-        const Interval& Get_value_range() const;
+        const Interval &Get_value_range() const;
 
         bool Value_within_boundary(double value) const noexcept;
 
