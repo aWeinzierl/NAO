@@ -15,7 +15,6 @@ find_package(catkin REQUIRED cmake_modules COMPONENTS
 catkin_package()
 include_directories(
   ${catkin_INCLUDE_DIRS}
-        ext/RxCpp/Rx/v2/src
 )
 
 add_executable(nao src/main.cpp src/NAO/NaoControl.cpp src/NAO/NaoControl.h src/NAO/Joints.h src/NAO/ContinuousJointSpecification.cpp src/NAO/ContinuousJointSpecification.h src/NAO/DiscreteJointSpecification.cpp src/NAO/DiscreteJointSpecification.h src/NAO/Interval.cpp src/NAO/Interval.h src/StdExtension/MakeUnique.h src/NAO/ClassEnumHash.h)

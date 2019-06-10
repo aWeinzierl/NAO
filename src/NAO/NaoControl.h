@@ -8,7 +8,6 @@
 #include <actionlib/client/simple_action_client.h>
 #include <naoqi_bridge_msgs/Bumper.h>
 #include <naoqi_bridge_msgs/HeadTouch.h>
-#include <rxcpp/rx.hpp>
 
 #include "Joints.h"
 #include "ContinuousJointSpecification.h"
@@ -96,10 +95,6 @@ namespace NAO {
         void Block_forever();
         void Unblock();
 
-        rxcpp::observable<naoqi_bridge_msgs::Bumper::ConstPtr> Bumper_sensor_state;
-        rxcpp::observable<naoqi_bridge_msgs::HeadTouch::ConstPtr> Hand_touch_sensor_state;
-        rxcpp::observable<sensor_msgs::JointState::ConstPtr> Joint_sensor_state;
-
     private:
 
         // ros handler
@@ -113,11 +108,6 @@ namespace NAO {
 
         // subscriber to head tactile states
         ros::Subscriber m_tactile_sub;
-
-        // variables which store current states of the joints
-        sensor_msgs::JointState m_current_left_arm_state;
-        sensor_msgs::JointState m_current_right_arm_state;
-        sensor_msgs::JointState m_current_head_legs_state;
 
         //define actionlib client for joint angles control
         JointAnglesClient m_jointAnglesClient;
@@ -136,17 +126,10 @@ namespace NAO {
 
         static constexpr bool within_interval_exclusive(double value, const Interval &interval);
 
-        // this function checks joint limits of the joints. You need to provide JointState vector
-        bool check_joint_limits(sensor_msgs::JointState joints) const;
-
-
         // this callback recives info about current joint states
         void sensor_callback(const sensor_msgs::JointState::ConstPtr &jointState);
 
-
         void create_and_sendAction(float jointGoalAngle, float velocity, const std::string &jointName);
-
-        double degree_to_radians(double angle) const noexcept;
 
         void spin_thread();
 
@@ -155,5 +138,7 @@ namespace NAO {
         std::unordered_map<HeadTouch, std::vector<boost::function<void(double angle)>>, EnumClassHash> m_head_touch_callbacks;
 
         double radian_to_degrees(const double angle) const noexcept;
+
+        double degree_to_radians(double angle) const noexcept;
     };
 }

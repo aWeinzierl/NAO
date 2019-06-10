@@ -79,23 +79,6 @@ namespace NAO {
         }
     }
 
-    constexpr bool NaoControl::within_interval_exclusive(double value, const Interval &interval) {
-        return interval.lowerLimit < value && interval.upperLimit > value;
-    }
-
-// this function checks joint limits of the left arm. You need to provide JointState vector
-    bool NaoControl::check_joint_limits(sensor_msgs::JointState joints) const {
-        std::vector<double> &positions = joints.position;
-
-        for (const auto &keyValue : continuousJoints) {
-            const auto &jointSpec = keyValue.second;
-            if (!jointSpec.Value_within_boundary(positions.at(jointSpec.Get_index()))) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 
 // this callback recives info about current joint states
     void NaoControl::sensor_callback(const sensor_msgs::JointState::ConstPtr &jointState) {
@@ -109,48 +92,6 @@ namespace NAO {
                 callback(valueInDegrees);
             }
         }
-
-        m_current_left_arm_state.name.clear();
-        m_current_left_arm_state.position.clear();
-        m_current_right_arm_state.name.clear();
-        m_current_right_arm_state.position.clear();
-        m_current_head_legs_state.name.clear();
-        m_current_head_legs_state.position.clear();
-
-        m_current_left_arm_state.header.stamp = ros::Time::now();
-
-        m_current_left_arm_state.name.push_back(jointState->name.at(2));
-        m_current_left_arm_state.position.push_back(jointState->position.at(2));
-        m_current_left_arm_state.name.push_back(jointState->name.at(3));
-        m_current_left_arm_state.position.push_back(jointState->position.at(3));
-        m_current_left_arm_state.name.push_back(jointState->name.at(4));
-        m_current_left_arm_state.position.push_back(jointState->position.at(4));
-        m_current_left_arm_state.name.push_back(jointState->name.at(5));
-        m_current_left_arm_state.position.push_back(jointState->position.at(5));
-        m_current_left_arm_state.name.push_back(jointState->name.at(6));
-        m_current_left_arm_state.position.push_back(jointState->position.at(6));
-
-        m_current_right_arm_state.name.push_back(jointState->name.at(20));
-        m_current_right_arm_state.position.push_back(jointState->position.at(20));
-        m_current_right_arm_state.name.push_back(jointState->name.at(21));
-        m_current_right_arm_state.position.push_back(jointState->position.at(21));
-        m_current_right_arm_state.name.push_back(jointState->name.at(22));
-        m_current_right_arm_state.position.push_back(jointState->position.at(22));
-        m_current_right_arm_state.name.push_back(jointState->name.at(23));
-        m_current_right_arm_state.position.push_back(jointState->position.at(23));
-        m_current_right_arm_state.name.push_back(jointState->name.at(24));
-        m_current_right_arm_state.position.push_back(jointState->position.at(24));
-
-        m_current_head_legs_state.name.push_back(jointState->name.at(0));
-        m_current_head_legs_state.position.push_back(jointState->position.at(0));
-        m_current_head_legs_state.name.push_back(jointState->name.at(1));
-        m_current_head_legs_state.position.push_back(jointState->position.at(1));
-        for (int i = 7; i < 20; i++) {
-            m_current_head_legs_state.name.push_back(jointState->name.at(i));
-            m_current_head_legs_state.position.push_back(jointState->position.at(i));
-        }
-        m_current_head_legs_state.name.push_back(jointState->name.at(25));
-        m_current_head_legs_state.position.push_back(jointState->position.at(25));
     }
 
 // this is main loop which should send commands to the nao arms.
@@ -236,6 +177,3 @@ namespace NAO {
         m_head_touch_callbacks[headTouch].push_back(callback);
     }
 }
-
-
-//10.152.246.74
