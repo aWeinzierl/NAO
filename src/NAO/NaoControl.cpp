@@ -85,7 +85,7 @@ namespace NAO {
 
         for (const auto &keyValue: m_c_joints_callbacks) {
             auto &callbacks = keyValue.second;
-            auto index = continuousJoints.find(keyValue.first)->second.Get_index();
+            auto index = Continuous_joints.find(keyValue.first)->second.Get_index();
             auto value = jointState->position.at(index);
             auto valueInDegrees = radian_to_degrees(value);
             for (const auto &callback : callbacks) {
@@ -121,15 +121,15 @@ namespace NAO {
 
 
     NaoControl &NaoControl::Move_joint_to_position_async(ContinuousJoint joint, float goalPosition, float velocity) {
-        auto jointSpecPtr = continuousJoints.find(joint);
-        if (jointSpecPtr == continuousJoints.end()) {
+        auto jointSpecPtr = Continuous_joints.find(joint);
+        if (jointSpecPtr == Continuous_joints.end()) {
             std::cout << "joint not implemented" << std::flush;
             throw std::logic_error("joint not implemented");
         }
         auto jointSpec = jointSpecPtr->second;
 
         auto goalPositionRadians = degree_to_radians(goalPosition);
-        std::cout << std::endl << "joint: " << continuousJoints.find(joint)->second.Get_name() << std::endl;
+        std::cout << std::endl << "joint: " << Continuous_joints.find(joint)->second.Get_name() << std::endl;
         std::cout << "radions: " << goalPositionRadians << "      " << std::endl;
         if (!jointSpec.Value_within_boundary(goalPositionRadians)) {
             std::cout << "std::out_of_range(\"goalPosition\")" << std::flush;
@@ -145,7 +145,7 @@ namespace NAO {
     }
 
     NaoControl &NaoControl::Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity) {
-        auto jointSpec = discreteJoints.find(joint)->second;
+        auto jointSpec = Discrete_joints.find(joint)->second;
         if (!jointSpec.Value_valid(goalPosition))
             throw std::out_of_range("goalPosition");
         create_and_sendAction(goalPosition, velocity, jointSpec.Get_name());

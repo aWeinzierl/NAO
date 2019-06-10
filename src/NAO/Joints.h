@@ -47,7 +47,7 @@ namespace NAO {
         BACK_BUMPER = 2,
     };
 
-    enum class HeadTouch {
+    enum class HeadTouch : unsigned char {
         FRONT_HEAD_TOUCH = 1,
         MIDDLE_HEAD_TOUCH = 2,
         BACK_HEAD_TOUCH = 3,

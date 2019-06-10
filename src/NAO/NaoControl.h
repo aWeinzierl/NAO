@@ -40,7 +40,7 @@ namespace NAO {
         // this is main loop which should send commands to the nao arms.
         void publish_joint_states();
 
-        const std::unordered_map<ContinuousJoint, ContinuousJointSpecification, EnumClassHash> continuousJoints{
+        const std::unordered_map<const ContinuousJoint, const ContinuousJointSpecification, EnumClassHash> Continuous_joints{
                 {ContinuousJoint::HEAD_PITCH,           ContinuousJointSpecification("HeadPitch",
                                                                                      Interval(-2.0857, 2.0857), 1)},
                 {ContinuousJoint::HEAD_YAW,             ContinuousJointSpecification("HeadYaw",
@@ -69,7 +69,7 @@ namespace NAO {
                                                                                      Interval(-1.8238, 1.8238), 24)},
         };
 
-        const std::unordered_map<DiscreteJoint, DiscreteJointSpecification, EnumClassHash> discreteJoints{
+        const std::unordered_map<const DiscreteJoint, const DiscreteJointSpecification, EnumClassHash> Discrete_joints{
                 {DiscreteJoint::LEFT_HAND,  DiscreteJointSpecification("LHand", {
                         static_cast<double>(HAND_POSITION::OPEN),
                         static_cast<double>(HAND_POSITION::CLOSED)
