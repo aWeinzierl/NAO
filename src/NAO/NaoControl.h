@@ -135,8 +135,7 @@ namespace NAO {
         void sensor_callback(const sensor_msgs::JointState::ConstPtr &jointState);
 
 
-        naoqi_bridge_msgs::JointAnglesWithSpeedGoal create_and_sendAction(float jointGoalAngle, float velocity,
-                                                                          const std::string &jointName);
+        void create_and_sendAction(float jointGoalAngle, float velocity, const std::string &jointName);
 
         double degree_to_radians(double angle) const noexcept;
 

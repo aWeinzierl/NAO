@@ -139,8 +139,7 @@ namespace NAO {
         }
     }
 
-    naoqi_bridge_msgs::JointAnglesWithSpeedGoal NaoControl::create_and_sendAction(float jointGoalAngle, float velocity,
-                                                                                  const std::string &jointName) {
+    void NaoControl::create_and_sendAction(float jointGoalAngle, float velocity, const std::string &jointName) {
         naoqi_bridge_msgs::JointAnglesWithSpeedGoal action;
         action.joint_angles.relative = 0;
         action.joint_angles.speed = velocity;
