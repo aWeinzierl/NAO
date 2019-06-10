@@ -11,7 +11,7 @@ namespace NAO {
 
         ContinuousJointSpecification(std::string name, const Interval& valueRange, uint index);
 
-        std::string Get_name() const;
+        const std::string& Get_name() const;
 
         const Interval& Get_value_range() const;
 
