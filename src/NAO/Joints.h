@@ -23,4 +23,16 @@ namespace NAO {
         LEFT_HAND,
         RIGHT_HAND,
     };
+
+    enum class Bumper {
+        LEFT_BUMPER,
+        RIGHT_BUMPER,
+        BACK_BUMPER,
+    };
+
+    enum class HeadTouch {
+        FRONT_HEAD_TOUCH,
+        MIDDLE_HEAD_TOUCH,
+        BACK_HEAD_TOUCH
+    };
 }
