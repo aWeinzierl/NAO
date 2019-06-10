@@ -175,4 +175,13 @@ namespace NAO {
         return *this;
     }
 
+    void NaoControl::Block_forever() {
+        spin_thread();
+        m_stop_thread = false;
+    }
+
+    void NaoControl::Unblock() {
+        m_stop_thread = true;
+    }
+
 }

@@ -86,12 +86,16 @@ namespace NAO {
         NaoControl& Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity);
 
         void Block_until_motion_finished();
+        void Block_forever();
+        void Unblock();
 
         rxcpp::observable<naoqi_bridge_msgs::Bumper::ConstPtr> Bumper_sensor_state;
         rxcpp::observable<naoqi_bridge_msgs::HandTouch::ConstPtr> Hand_touch_sensor_state;
         rxcpp::observable<sensor_msgs::JointState::ConstPtr> Joint_sensor_state;
 
     private:
+
+        std::vector<boost::function<void(const naoqi_bridge_msgs::Bumper::ConstPtr &)>> bumperCallbacks;
 
         // ros handler
         ros::NodeHandle m_nodeHandle;
