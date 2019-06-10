@@ -36,6 +36,10 @@ namespace NAO {
         m_tactile_sub = m_nodeHandle.subscribe("/tactile_touch", 1, &NaoControl::tactile_callback, this);
 
         m_spin_thread = stdExtension::make_unique<boost::thread>(boost::bind(&NaoControl::spin_thread, this));
+
+        m_bumper_callbacks[Bumper::BACK_BUMPER] = {};
+        m_bumper_callbacks[Bumper::LEFT_BUMPER] = {};
+        m_bumper_callbacks[Bumper::RIGHT_BUMPER] = {};
     }
 
     NaoControl::~NaoControl() {
@@ -47,6 +51,10 @@ namespace NAO {
 // this callback function provides information about nao feet bumpers
     void NaoControl::bumper_callback(const naoqi_bridge_msgs::Bumper::ConstPtr &bumperState) {
 
+        auto callbacks = m_bumper_callbacks.find(static_cast<Bumper>(bumperState->bumper))->second;
+        for (const auto & callback :callbacks){
+            callback(bumperState->state);
+        }
     }
 
 // this callback provides information about current head tactile buttons.
@@ -182,6 +190,12 @@ namespace NAO {
 
     void NaoControl::Unblock() {
         m_stop_thread = true;
+    }
+
+    void NaoControl::SubscribeToSensor(Bumper bumper,
+                                       const boost::function<void(bool pressed)>& callback) {
+        m_bumper_callbacks[bumper].push_back(callback);
+        std::cout << static_cast<unsigned char>(bumper)<< std::flush;
     }
 
 }

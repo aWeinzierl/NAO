@@ -24,10 +24,10 @@ namespace NAO {
         RIGHT_HAND,
     };
 
-    enum class Bumper {
-        LEFT_BUMPER,
-        RIGHT_BUMPER,
-        BACK_BUMPER,
+    enum class Bumper : unsigned char {
+        LEFT_BUMPER = 1,
+        RIGHT_BUMPER = 0,
+        BACK_BUMPER = 2,
     };
 
     enum class HeadTouch {

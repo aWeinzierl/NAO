@@ -85,6 +85,13 @@ namespace NAO {
 
         NaoControl& Move_joint_to_position_async(DiscreteJoint joint, float goalPosition, float velocity);
 
+        void SubscribeToSensor(Bumper bumper, const boost::function<void(bool pressed )>& callback);
+
+        void SubscribeToSensor(ContinuousJoint joint, boost::function<void(const naoqi_bridge_msgs::Bumper::ConstPtr &)> callback);
+
+        void SubscribeToSensor(HeadTouch bumper, boost::function<void(const naoqi_bridge_msgs::Bumper::ConstPtr &)> callback);
+
+
         void Block_until_motion_finished();
         void Block_forever();
         void Unblock();
@@ -94,8 +101,6 @@ namespace NAO {
         rxcpp::observable<sensor_msgs::JointState::ConstPtr> Joint_sensor_state;
 
     private:
-
-        std::vector<boost::function<void(const naoqi_bridge_msgs::Bumper::ConstPtr &)>> bumperCallbacks;
 
         // ros handler
         ros::NodeHandle m_nodeHandle;
@@ -145,5 +150,6 @@ namespace NAO {
 
         void spin_thread();
 
+        std::unordered_map<Bumper, std::vector<boost::function<void(bool pressed)>>, EnumClassHash> m_bumper_callbacks;
     };
 }
