@@ -35,14 +35,14 @@ int main(int argc, char **argv) {
     ic.SubscribeToSensor(NAO::HeadTouch::FRONT_HEAD_TOUCH, //front clockwise ; middle counter
                          [&ic, &currentHeadPosition](bool pressed) {
                              if (pressed) {
-                                 ic.Move_joint_to_position_async(NAO::ContinuousJoint::HEAD_YAW, currentHeadPosition + 10, 0.05);
+                                 ic.Move_joint_to_position_async(NAO::ContinuousJoint::HEAD_YAW, currentHeadPosition - 10, 0.05);
                              }
                          });
 
-    ic.SubscribeToSensor(NAO::HeadTouch::MIDDLE_HEAD_TOUCH, //front clockwise ; middle counter
+    ic.SubscribeToSensor(NAO::HeadTouch::BACK_HEAD_TOUCH, //front clockwise ; middle counter
                          [&ic, &currentHeadPosition](bool pressed) {
                              if (pressed) {
-                                 ic.Move_joint_to_position_async(NAO::ContinuousJoint::HEAD_YAW, currentHeadPosition - 10, 0.05);
+                                 ic.Move_joint_to_position_async(NAO::ContinuousJoint::HEAD_YAW, currentHeadPosition + 10, 0.05);
                              }
                          });
 
