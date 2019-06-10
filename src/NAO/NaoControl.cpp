@@ -6,6 +6,8 @@
 
 #include <boost/math/constants/constants.hpp>
 
+#include "../StdExtension/MakeUnique.h"
+
 namespace NAO {
 
     void NaoControl::spin_thread() {
@@ -33,7 +35,7 @@ namespace NAO {
         // subscribe to topic tactile_touch and specify that all data will be processed by function tactile_callback
         m_tactile_sub = m_nodeHandle.subscribe("/tactile_touch", 1, &NaoControl::tactile_callback, this);
 
-        m_spin_thread = std::make_unique<boost::thread>(boost::bind(&NaoControl::spin_thread, this));
+        m_spin_thread = stdExtension::make_unique<boost::thread>(boost::bind(&NaoControl::spin_thread, this));
 
         Bumper_sensor_state = from<naoqi_bridge_msgs::Bumper>(m_nodeHandle, "/bumper");
         Hand_touch_sensor_state = from<naoqi_bridge_msgs::HandTouch>(m_nodeHandle, "/tactile_touch");
