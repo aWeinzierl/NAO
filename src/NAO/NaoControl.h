@@ -105,6 +105,8 @@ namespace NAO {
         // subscriber to head tactile states
         ros::Subscriber m_tactile_sub;
 
+        ros::Subscriber m_s;
+
         // variables which store current states of the joints
         sensor_msgs::JointState m_current_left_arm_state;
         sensor_msgs::JointState m_current_right_arm_state;
@@ -138,19 +140,19 @@ namespace NAO {
         void create_and_sendAction(float jointGoalAngle, float velocity, const std::string &jointName);
 
         double degree_to_radians(double angle) const noexcept;
-
+    public:
         void spin_thread();
 
         template<typename T>
-        rxcpp::observable<T> from(ros::NodeHandle &nodeHandle, std::string topic) {
+        rxcpp::observable<T> from(ros::Subscriber &subscriber, ros::NodeHandle &nodeHandle, std::string topic) {
             return rxcpp::sources::create<T>(
-                    [&nodeHandle, topic](rxcpp::subscriber<T> out) {
+                    [&subscriber, &nodeHandle, topic](rxcpp::subscriber<T> out) {
                         boost::function<void(const T &)> callback =
                                 [=](const T &msg) {
                                     out.on_next(msg);
                                     std::cout << "works";
                                 };
-                        auto token = nodeHandle.subscribe<T>(topic, 1, callback);
+                        subscriber = nodeHandle.subscribe<T>(topic, 1, callback);
                     });
         }
     };
